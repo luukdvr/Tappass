@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Toevoegen van een aangepaste achtergrondkleur voor de loginpagina */
+.bg-login {
+  background-color: rgb(0, 29, 74);
+}
