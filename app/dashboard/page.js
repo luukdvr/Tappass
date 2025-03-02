@@ -1,11 +1,10 @@
 "use client"; // Zorgt ervoor dat deze code alleen in de browser draait
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { auth, db } from "../../firebaseConfig"; // Ensure auth is imported
-import { signOut } from "firebase/auth";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import supabase from "../../supabaseClient"; // Import Supabase client
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import Image from "next/image"; // Import Image component
 
 export default function Dashboard() {
   const [links, setLinks] = useState([]);
@@ -23,25 +22,41 @@ export default function Dashboard() {
   const [showBgColorModal, setShowBgColorModal] = useState(false); // State for background color modal
   const [showBioModal, setShowBioModal] = useState(false); // State for bio modal
   const [showNotification, setShowNotification] = useState(false); // State for notification
+  const [error, setError] = useState(null); // State for error
   const router = useRouter();
-  const user = auth.currentUser; // Ensure auth is used correctly
+  const [user, setUser] = useState(null); // State for user
 
-  // Controleer of de gebruiker is ingelogd
+  // Fetch the current user
   useEffect(() => {
-    if (!user) {
-      router.push("/auth/login");
-    } else {
-      loadProfile();
-    }
-  }, [user]);
+    const fetchUser = async () => {
+      const { data, error } = await supabase.auth.getUser();
+      if (error) {
+        console.error("Error fetching user:", error);
+        setError("Fout bij het ophalen van gebruikersgegevens. Probeer het later opnieuw.");
+      } else {
+        setUser(data.user);
+      }
+    };
 
-  // Laad de profielgegevens van Firestore
-  const loadProfile = async () => {
+    fetchUser();
+  }, []);
+
+  // Laad de profielgegevens van Supabase
+  const loadProfile = useCallback(async () => {
     if (user) {
-      const docRef = doc(db, "users", user.uid);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const data = docSnap.data();
+      try {
+        console.log("Fetching profile for user ID:", user.id); // Debugging information
+        const { data, error } = await supabase
+          .from("users")
+          .select("*")
+          .eq("id", user.id)
+          .single();
+        if (error) {
+          console.error("Error loading profile:", error);
+          setError(`Fout bij het laden van profielgegevens: ${error.message}`);
+          return;
+        }
+        console.log("Profile data:", data); // Debugging information
         setLinks(data.links || []);
         setBio(data.bio || ""); // Set bio from fetched data
         setName(data.name || ""); // Set name from fetched data
@@ -51,9 +66,25 @@ export default function Dashboard() {
         setPhone(data.phone || ""); // Set phone from fetched data
         setFunctionTitle(data.functionTitle || ""); // Set function title from fetched data
         setBgColor(data.bgColor || ""); // Set background color from fetched data
+      } catch (err) {
+        console.error("Error loading profile:", err);
+        setError(`Fout bij het laden van profielgegevens: ${err.message}`);
       }
     }
-  };
+  }, [user]);
+
+  // Controleer of de gebruiker is ingelogd
+  useEffect(() => {
+    if (user === null) {
+      // Wait for user state to be determined
+      return;
+    }
+    if (!user) {
+      router.push("/auth/login");
+    } else {
+      loadProfile();
+    }
+  }, [user, router, loadProfile]);
 
   // Voeg een nieuwe link toe
   const handleAddLink = async () => {
@@ -65,7 +96,16 @@ export default function Dashboard() {
     setShowLinkModal(false);
 
     if (user) {
-      await setDoc(doc(db, "users", user.uid), { links: updatedLinks }, { merge: true });
+      try {
+        const { error } = await supabase
+          .from("users")
+          .update({ links: updatedLinks })
+          .eq("id", user.id);
+        if (error) throw error;
+      } catch (err) {
+        console.error("Error adding link:", err);
+        setError(`Fout bij het toevoegen van de link: ${err.message}`);
+      }
     }
   };
 
@@ -75,7 +115,16 @@ export default function Dashboard() {
     setLinks(updatedLinks);
 
     if (user) {
-      await setDoc(doc(db, "users", user.uid), { links: updatedLinks }, { merge: true });
+      try {
+        const { error } = await supabase
+          .from("users")
+          .update({ links: updatedLinks })
+          .eq("id", user.id);
+        if (error) throw error;
+      } catch (err) {
+        console.error("Error deleting link:", err);
+        setError(`Fout bij het verwijderen van de link: ${err.message}`);
+      }
     }
   };
 
@@ -90,7 +139,16 @@ export default function Dashboard() {
     setLinks(reorderedLinks);
 
     if (user) {
-      await setDoc(doc(db, "users", user.uid), { links: reorderedLinks }, { merge: true });
+      try {
+        const { error } = await supabase
+          .from("users")
+          .update({ links: reorderedLinks })
+          .eq("id", user.id);
+        if (error) throw error;
+      } catch (err) {
+        console.error("Error reordering links:", err);
+        setError(`Fout bij het herschikken van de links: ${err.message}`);
+      }
     }
   };
 
@@ -107,27 +165,44 @@ export default function Dashboard() {
         functionTitle,
         bgColor,
       };
-      await setDoc(doc(db, "users", user.uid), userData, { merge: true });
-      setShowNotification(true);
-      setTimeout(() => setShowNotification(false), 3000); // Hide notification after 3 seconds
-      setShowProfileModal(false);
-      setShowBgColorModal(false);
-      setShowBioModal(false);
+      try {
+        const { error } = await supabase
+          .from("users")
+          .update(userData)
+          .eq("id", user.id);
+        if (error) throw error;
+        setShowNotification(true);
+        setTimeout(() => setShowNotification(false), 3000); // Hide notification after 3 seconds
+        setShowProfileModal(false);
+        setShowBgColorModal(false);
+        setShowBioModal(false);
+      } catch (err) {
+        console.error("Error saving profile:", err);
+        setError(`Fout bij het opslaan van profielgegevens: ${err.message}`);
+      }
     }
   };
 
   // Uitloggen
   const handleLogout = async () => {
-    await signOut(auth);
-    router.push("/auth/login");
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      router.push("/auth/login");
+    } catch (err) {
+      console.error("Error logging out:", err);
+      setError(`Fout bij het uitloggen: ${err.message}`);
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-login p-6">
       <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
         <div className="flex justify-center mb-6">
-          <img src="/logo%20tappass.png" alt="Tappass Logo" className="h-16" />
+          <Image src="/logo%20tappass.png" alt="Tappass Logo" className="h-16" width={64} height={64} />
         </div>
+
+        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
         {/* Bio knop */}
         <button
@@ -198,7 +273,7 @@ export default function Dashboard() {
         {/* Knop naar profielpagina */}
         <div className="text-center mt-4">
           <a
-            href={`/profile/${user?.uid}`}
+            href={`/profile/${user?.id}`}
             className="bg-blue-500 text-white py-2 px-4 rounded text-sm"
             target="_blank"
             rel="noopener noreferrer"

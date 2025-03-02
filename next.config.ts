@@ -12,7 +12,7 @@ const nextConfig: NextConfig = {
             value: `
               default-src 'self';
               script-src 'self' https://apis.google.com 'unsafe-inline';
-              connect-src 'self' https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com;
+              connect-src 'self' https://*.supabase.co;
               img-src 'self' data:;
               frame-src 'self';
               object-src 'none';

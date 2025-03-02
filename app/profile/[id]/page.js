@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation"; // Correcte manier om params op te halen in Next.js 14+
-import { db } from "../../../firebaseConfig";
-import { doc, getDoc } from "firebase/firestore";
+import supabase from "../../../supabaseClient"; // Import Supabase client
 import { FaEnvelope, FaMapMarkerAlt, FaPhone } from "react-icons/fa"; // Import icons
 
 export default function ProfilePage() {
@@ -25,23 +24,21 @@ export default function ProfilePage() {
     const fetchProfile = async () => {
       setLoading(true);
       try {
-        const docRef = doc(db, "users", params.id);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          setLinks(data.links || []);
-          setBio(data.bio || ""); // Set bio from fetched data
-          setName(data.name || ""); // Set name from fetched data
-          setSurname(data.surname || ""); // Set surname from fetched data
-          setAddress(data.address || ""); // Set address from fetched data
-          setEmail(data.email || ""); // Set email from fetched data
-          setPhone(data.phone || ""); // Set phone from fetched data
-          setFunctionTitle(data.functionTitle || ""); // Set function title from fetched data
-          setBgColor(data.bgColor || ""); // Set background color from fetched data
-        } else {
-          console.log("Geen profiel gevonden.");
-        }
+        const { data, error } = await supabase
+          .from("users")
+          .select("*")
+          .eq("id", params.id)
+          .single();
+        if (error) throw error;
+        setLinks(data.links || []);
+        setBio(data.bio || ""); // Set bio from fetched data
+        setName(data.name || ""); // Set name from fetched data
+        setSurname(data.surname || ""); // Set surname from fetched data
+        setAddress(data.address || ""); // Set address from fetched data
+        setEmail(data.email || ""); // Set email from fetched data
+        setPhone(data.phone || ""); // Set phone from fetched data
+        setFunctionTitle(data.functionTitle || ""); // Set function title from fetched data
+        setBgColor(data.bgColor || ""); // Set background color from fetched data
       } catch (error) {
         console.error("Fout bij het ophalen van profielgegevens:", error);
       }

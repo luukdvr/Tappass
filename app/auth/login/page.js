@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { auth } from "../../../firebaseConfig";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import supabase from "../../../supabaseClient"; // Import Supabase client
+import Image from "next/image"; // Import Image component
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -13,11 +13,11 @@ export default function LoginPage() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      setError("Fout bij inloggen. Controleer je gegevens en probeer opnieuw.");
+    } else {
       router.push("/dashboard");
-    } catch (error) {
-      setError("Fout bij inloggen. Controleer je gegevens en probeer opnieuw. E-mail/wachtwoord vergeten? Stuur een e-mail naar info@tappass.nl om je verder te helpen.");
     }
   };
 
@@ -25,7 +25,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-login p-6">
       <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
         <div className="flex justify-center mb-6">
-          <img src="/logo%20tappass.png" alt="Tappass Logo" className="h-16" />
+          <Image src="/logo%20tappass.png" alt="Tappass Logo" width={64} height={64} />
         </div>
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Inloggen</h2>
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
