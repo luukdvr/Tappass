@@ -68,7 +68,7 @@ export default function Dashboard() {
         setPhone(data.phone || ""); // Set phone from fetched data
         setFunctionTitle(data.functionTitle || ""); // Set function title from fetched data
         setBgColor(data.bgColor || ""); // Set background color from fetched data
-        setProfileImage(data.profile_image || null); // Set profile image from fetched data
+        setProfileImage(data.profileimageurl || null); // Set profile image from fetched data
       } catch (err) {
         console.error("Error loading profile:", err);
         setError(`Fout bij het laden van profielgegevens: ${err.message}`);

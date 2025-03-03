@@ -13,7 +13,7 @@ export default function LoginPage() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       if (error.message === "Invalid login credentials") {
         setError("Geen account gevonden met deze gegevens. Controleer je gegevens en probeer opnieuw.");
