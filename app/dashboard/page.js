@@ -173,7 +173,7 @@ export default function Dashboard() {
 
       // Upload het bestand naar de Supabase storage bucket
       const { error: uploadError } = await supabase.storage
-        .from('profile-images')
+        .from('avatars')
         .upload(filePath, file);
 
       if (uploadError) {
@@ -182,13 +182,13 @@ export default function Dashboard() {
 
       // Genereer een publieke URL voor het bestand
       const { data: { publicUrl } } = supabase.storage
-        .from('profile-images')
+        .from('avatars')
         .getPublicUrl(filePath);
 
       // Werk de gebruiker bij met de nieuwe profielfoto URL
       const { error: updateError } = await supabase
         .from('users')
-        .update({ profile_image: publicUrl })
+        .update({ profileimageurl: publicUrl }) // Correct column name
         .eq('id', user.id);
 
       if (updateError) {
@@ -254,7 +254,7 @@ export default function Dashboard() {
     <div className="min-h-screen flex items-center justify-center bg-login p-6">
       <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
         <div className="flex flex-col items-center mb-6">
-          <Image src="/logo%20tappass.png" alt="Tappass Logo" className="h-16 mb-4" width={64} height={64} />
+          <Image src="/logo%20tappass.png" alt="Tappass Logo" className="h-16 mb-4" width={256} height={256} />
           
           {/* Profielfoto upload sectie */}
           <div className="w-24 h-24 relative mb-4">

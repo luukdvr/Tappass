@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation"; // Correcte manier om params op te halen in Next.js 14+
 import supabase from "../../../supabaseClient"; // Import Supabase client
 import { FaEnvelope, FaMapMarkerAlt, FaPhone } from "react-icons/fa"; // Import icons
+import Image from "next/image"; // Import Image component
 
 export default function ProfilePage() {
   const [links, setLinks] = useState([]);
@@ -15,6 +16,7 @@ export default function ProfilePage() {
   const [phone, setPhone] = useState(""); // Add state for phone
   const [functionTitle, setFunctionTitle] = useState(""); // Add state for function title
   const [bgColor, setBgColor] = useState(""); // Add state for background color
+  const [profileImage, setProfileImage] = useState(null); // Add state for profile image URL
   const [loading, setLoading] = useState(true);
   const params = useParams(); // Haal de route params op
 
@@ -39,6 +41,7 @@ export default function ProfilePage() {
         setPhone(data.phone || ""); // Set phone from fetched data
         setFunctionTitle(data.functionTitle || ""); // Set function title from fetched data
         setBgColor(data.bgColor || ""); // Set background color from fetched data
+        setProfileImage(data.profileimageurl || null); // Set profile image from fetched data
       } catch (error) {
         console.error("Fout bij het ophalen van profielgegevens:", error);
       }
@@ -55,6 +58,17 @@ export default function ProfilePage() {
           <p className="text-gray-600">Laden...</p>
         ) : (
           <>
+            {profileImage && (
+              <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden border-2 border-blue-500">
+                <Image 
+                  src={profileImage} 
+                  alt="Profielfoto" 
+                  width={96} 
+                  height={96} 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
             <h1 className="text-2xl font-bold text-center text-gray-800 mb-2">{name} {surname}</h1>
             {functionTitle && (
               <p className="text-center text-gray-600 mb-4">{functionTitle}</p>
