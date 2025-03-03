@@ -171,7 +171,15 @@ export default function Dashboard() {
       const fileExt = file.name.split('.').pop();
       const filePath = `${user.id}-${Math.random()}.${fileExt}`;
 
-      // Upload het bestand naar de Supabase storage bucket
+      // Verwijder de oude profielfoto uit de Supabase storage bucket
+      if (profileImage) {
+        const oldFilePath = profileImage.split('/').pop();
+        await supabase.storage
+          .from('avatars')
+          .remove([oldFilePath]);
+      }
+
+      // Upload het nieuwe bestand naar de Supabase storage bucket
       const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(filePath, file);
@@ -180,7 +188,7 @@ export default function Dashboard() {
         throw uploadError;
       }
 
-      // Genereer een publieke URL voor het bestand
+      // Genereer een publieke URL voor het nieuwe bestand
       const { data: { publicUrl } } = supabase.storage
         .from('avatars')
         .getPublicUrl(filePath);
