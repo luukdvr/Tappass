@@ -17,6 +17,8 @@ export default function Dashboard() {
   const [phone, setPhone] = useState(""); // Add state for phone
   const [functionTitle, setFunctionTitle] = useState(""); // Add state for function title
   const [bgColor, setBgColor] = useState(""); // Add state for background color
+  const [profileImage, setProfileImage] = useState(null); // Add state for profile image URL
+  const [uploading, setUploading] = useState(false); // Add state for upload status
   const [showLinkModal, setShowLinkModal] = useState(false); // State for link modal
   const [showProfileModal, setShowProfileModal] = useState(false); // State for profile modal
   const [showBgColorModal, setShowBgColorModal] = useState(false); // State for background color modal
@@ -66,6 +68,7 @@ export default function Dashboard() {
         setPhone(data.phone || ""); // Set phone from fetched data
         setFunctionTitle(data.functionTitle || ""); // Set function title from fetched data
         setBgColor(data.bgColor || ""); // Set background color from fetched data
+        setProfileImage(data.profile_image || null); // Set profile image from fetched data
       } catch (err) {
         console.error("Error loading profile:", err);
         setError(`Fout bij het laden van profielgegevens: ${err.message}`);
@@ -152,6 +155,58 @@ export default function Dashboard() {
     }
   };
 
+  // Nieuwe functie voor het uploaden van een profielfoto
+  const uploadProfileImage = async (event) => {
+    try {
+      setUploading(true);
+      setError(null);
+
+      if (!event.target.files || event.target.files.length === 0) {
+        setError("Je moet een bestand selecteren");
+        setUploading(false);
+        return;
+      }
+
+      const file = event.target.files[0];
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${user.id}-${Math.random()}.${fileExt}`;
+
+      // Upload het bestand naar de Supabase storage bucket
+      const { error: uploadError } = await supabase.storage
+        .from('profile-images')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      // Genereer een publieke URL voor het bestand
+      const { data: { publicUrl } } = supabase.storage
+        .from('profile-images')
+        .getPublicUrl(filePath);
+
+      // Werk de gebruiker bij met de nieuwe profielfoto URL
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({ profile_image: publicUrl })
+        .eq('id', user.id);
+
+      if (updateError) {
+        throw updateError;
+      }
+
+      // Werk de lokale state bij
+      setProfileImage(publicUrl);
+      setShowNotification(true);
+      setTimeout(() => setShowNotification(false), 3000);
+    } catch (err) {
+      console.error("Error uploading image:", err);
+      setError(`Fout bij het uploaden van de afbeelding: ${err.message}`);
+    } finally {
+      setUploading(false);
+    }
+  };
+
   // Update bio and other profile information
   const handleSaveProfile = async () => {
     if (user) {
@@ -198,8 +253,45 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-login p-6">
       <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
-        <div className="flex justify-center mb-6">
-          <Image src="/logo%20tappass.png" alt="Tappass Logo" className="h-16" width={64} height={64} />
+        <div className="flex flex-col items-center mb-6">
+          <Image src="/logo%20tappass.png" alt="Tappass Logo" className="h-16 mb-4" width={64} height={64} />
+          
+          {/* Profielfoto upload sectie */}
+          <div className="w-24 h-24 relative mb-4">
+            {profileImage ? (
+              <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-blue-500">
+                <Image 
+                  src={profileImage} 
+                  alt="Profielfoto" 
+                  width={96} 
+                  height={96} 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ) : (
+              <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center border-2 border-blue-500">
+                <span className="text-4xl text-gray-400">
+                  {name && surname ? `${name.charAt(0)}${surname.charAt(0)}` : '?'}
+                </span>
+              </div>
+            )}
+            
+            <label htmlFor="profile-upload" className="absolute bottom-0 right-0 bg-blue-500 rounded-full p-2 cursor-pointer">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              <input
+                id="profile-upload"
+                type="file"
+                className="hidden"
+                accept="image/*"
+                onChange={uploadProfileImage}
+                disabled={uploading}
+              />
+            </label>
+          </div>
+          
+          {uploading && <p className="text-blue-500 text-sm mb-2">Uploaden...</p>}
         </div>
 
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}

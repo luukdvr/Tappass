@@ -13,9 +13,13 @@ export default function LoginPage() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
-      setError("Fout bij inloggen. Controleer je gegevens en probeer opnieuw.");
+      if (error.message === "Invalid login credentials") {
+        setError("Geen account gevonden met deze gegevens. Controleer je gegevens en probeer opnieuw.");
+      } else {
+        setError("Fout bij inloggen. Controleer je gegevens en probeer opnieuw.");
+      }
     } else {
       router.push("/dashboard");
     }
@@ -25,7 +29,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-login p-6">
       <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
         <div className="flex justify-center mb-6">
-          <Image src="/logo%20tappass.png" alt="Tappass Logo" width={64} height={64} />
+          <Image src="/logo%20tappass.png" alt="Tappass Logo" width={256} height={256} />
         </div>
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Inloggen</h2>
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
