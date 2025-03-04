@@ -5,10 +5,49 @@ import { useRouter } from "next/navigation";
 import supabase from "../../supabaseClient"; // Import Supabase client
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import Image from "next/image"; // Import Image component
+import { useLanguage } from "../../context/LanguageContext"; // Import Language context
+
+const translations = {
+  nl: {
+    edit: "Bewerken",
+    delete: "Verwijderen",
+    addLink: "Link Toevoegen",
+    viewProfile: "Bekijk jouw profielpagina",
+    logout: "Uitloggen",
+    editBio: "Bio Bewerken",
+    editContact: "Contactinformatie Bewerken",
+    changeBgColor: "Achtergrondkleur Wijzigen",
+    yourLinks: "Jouw Links",
+    newLinkTitle: "Titel van de link",
+    newLinkUrl: "URL van de link",
+    save: "Opslaan",
+    cancel: "Annuleren",
+    newLink: "Nieuwe Link Toevoegen",
+    editLink: "Link Bewerken",
+  },
+  en: {
+    edit: "Edit",
+    delete: "Delete",
+    addLink: "Add Link",
+    viewProfile: "View your profile page",
+    logout: "Logout",
+    editBio: "Edit Bio",
+    editContact: "Edit Contact Information",
+    changeBgColor: "Change Background Color",
+    yourLinks: "Your Links",
+    newLinkTitle: "Link Title",
+    newLinkUrl: "Link URL",
+    save: "Save",
+    cancel: "Cancel",
+    newLink: "Add New Link",
+    editLink: "Edit Link",
+  },
+};
 
 export default function Dashboard() {
   const [links, setLinks] = useState([]);
   const [newLink, setNewLink] = useState("");
+  const [newLinkTitle, setNewLinkTitle] = useState(""); // Add state for new link title
   const [bio, setBio] = useState(""); // Add state for bio
   const [name, setName] = useState(""); // Add state for name
   const [surname, setSurname] = useState(""); // Add state for surname
@@ -27,6 +66,11 @@ export default function Dashboard() {
   const [error, setError] = useState(null); // State for error
   const router = useRouter();
   const [user, setUser] = useState(null); // State for user
+  const [editLinkIndex, setEditLinkIndex] = useState(null); // State for editing link index
+  const [editLinkTitle, setEditLinkTitle] = useState(""); // State for editing link title
+  const [editLinkUrl, setEditLinkUrl] = useState(""); // State for editing link URL
+  const { language, toggleLanguage } = useLanguage();
+  const t = translations[language];
 
   // Fetch the current user
   useEffect(() => {
@@ -91,11 +135,16 @@ export default function Dashboard() {
 
   // Voeg een nieuwe link toe
   const handleAddLink = async () => {
-    if (!newLink.trim()) return;
+    if (!newLink.trim() || !newLinkTitle.trim()) return;
+    if (newLinkTitle.length > 30) {
+      setError("De titel van de link mag maximaal 30 symbolen bevatten.");
+      return;
+    }
 
-    const updatedLinks = [...links, { title: newLink, url: newLink }];
+    const updatedLinks = [...links, { title: newLinkTitle, url: newLink }];
     setLinks(updatedLinks);
     setNewLink("");
+    setNewLinkTitle("");
     setShowLinkModal(false);
 
     if (user) {
@@ -127,6 +176,45 @@ export default function Dashboard() {
       } catch (err) {
         console.error("Error deleting link:", err);
         setError(`Fout bij het verwijderen van de link: ${err.message}`);
+      }
+    }
+  };
+
+  // Bewerk een link
+  const handleEditLink = (index) => {
+    setEditLinkIndex(index);
+    setEditLinkTitle(links[index].title);
+    setEditLinkUrl(links[index].url);
+    setShowLinkModal(true);
+  };
+
+  // Update een link
+  const handleUpdateLink = async () => {
+    if (!editLinkTitle.trim() || !editLinkUrl.trim()) return;
+    if (editLinkTitle.length > 30) {
+      setError("De titel van de link mag maximaal 30 symbolen bevatten.");
+      return;
+    }
+
+    const updatedLinks = links.map((link, index) =>
+      index === editLinkIndex ? { title: editLinkTitle, url: editLinkUrl } : link
+    );
+    setLinks(updatedLinks);
+    setEditLinkIndex(null);
+    setEditLinkTitle("");
+    setEditLinkUrl("");
+    setShowLinkModal(false);
+
+    if (user) {
+      try {
+        const { error } = await supabase
+          .from("users")
+          .update({ links: updatedLinks })
+          .eq("id", user.id);
+        if (error) throw error;
+      } catch (err) {
+        console.error("Error updating link:", err);
+        setError(`Fout bij het bijwerken van de link: ${err.message}`);
       }
     }
   };
@@ -284,7 +372,7 @@ export default function Dashboard() {
               </div>
             )}
             
-            <label htmlFor="profile-upload" className="absolute bottom-0 right-0 bg-blue-500 rounded-full p-2 cursor-pointer">
+            <label htmlFor="profile-upload" className="absolute bottom-0 right-0 bg-blue-500 rounded-full p-2 cursor-pointer shadow-md">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
@@ -307,29 +395,29 @@ export default function Dashboard() {
         {/* Bio knop */}
         <button
           onClick={() => setShowBioModal(true)}
-          className="w-full bg-blue-500 text-white py-2 rounded mb-4"
+          className="w-full bg-blue-500 text-white py-2 rounded mb-4 shadow-md"
         >
-          Bio Bewerken
+          {t.editBio}
         </button>
 
         {/* Profielinformatie knop */}
         <button
           onClick={() => setShowProfileModal(true)}
-          className="w-full bg-blue-500 text-white py-2 rounded mb-4"
+          className="w-full bg-blue-500 text-white py-2 rounded mb-4 shadow-md"
         >
-          Contactinformatie Bewerken
+          {t.editContact}
         </button>
 
         {/* Achtergrondkleur knop */}
         <button
           onClick={() => setShowBgColorModal(true)}
-          className="w-full bg-blue-500 text-white py-2 rounded mb-4"
+          className="w-full bg-blue-500 text-white py-2 rounded mb-4 shadow-md"
         >
-          Achtergrondkleur Wijzigen
+          {t.changeBgColor}
         </button>
 
         {/* Lijst met links */}
-        <h3 className="text-lg font-bold mt-6 text-gray-700">Jouw Links</h3>
+        <h3 className="text-lg font-bold mt-6 text-gray-700">{t.yourLinks}</h3>
         <DragDropContext onDragEnd={handleDragEnd}>
           <Droppable droppableId="links">
             {(provided) => (
@@ -341,17 +429,25 @@ export default function Dashboard() {
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
-                        className="flex justify-between items-center bg-gray-100 p-3 rounded-lg"
+                        className="flex justify-between items-center bg-gray-100 p-3 rounded-lg shadow-md"
                       >
                         <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 text-sm">
                           {link.title}
                         </a>
-                        <button
-                          onClick={() => handleDeleteLink(index)}
-                          className="text-red-500 text-sm"
-                        >
-                          Verwijderen
-                        </button>
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => handleEditLink(index)}
+                            className="text-blue-500 text-sm"
+                          >
+                            {t.edit}
+                          </button>
+                          <button
+                            onClick={() => handleDeleteLink(index)}
+                            className="text-red-500 text-sm"
+                          >
+                            {t.delete}
+                          </button>
+                        </div>
                       </li>
                     )}
                   </Draggable>
@@ -365,52 +461,65 @@ export default function Dashboard() {
         {/* Link toevoegen knop */}
         <button
           onClick={() => setShowLinkModal(true)}
-          className="w-full bg-blue-500 text-white py-2 rounded mt-4"
+          className="w-full bg-blue-500 text-white py-2 rounded mt-4 shadow-md"
         >
-          Link Toevoegen
+          {t.addLink}
         </button>
 
         {/* Knop naar profielpagina */}
         <div className="text-center mt-4">
           <a
             href={`/profile/${user?.id}`}
-            className="bg-blue-500 text-white py-2 px-4 rounded text-sm"
+            className="bg-blue-500 text-white py-2 px-4 rounded text-sm shadow-md"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Bekijk jouw profielpagina
+            {t.viewProfile}
           </a>
         </div>
 
         {/* Uitlogknop */}
-        <button onClick={handleLogout} className="w-full bg-red-500 text-white py-2 rounded mt-4">
-          Uitloggen
+        <button onClick={handleLogout} className="w-full bg-red-500 text-white py-2 rounded mt-4 shadow-md">
+          {t.logout}
         </button>
       </div>
 
-      {/* Link toevoegen modal */}
+      {/* Link toevoegen/bewerken modal */}
       {showLinkModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">Nieuwe Link Toevoegen</h2>
+            <h2 className="text-xl font-bold mb-4">{editLinkIndex !== null ? t.editLink : t.newLink}</h2>
             <input
               type="text"
-              placeholder="Nieuwe link toevoegen"
-              value={newLink}
-              onChange={(e) => setNewLink(e.target.value)}
+              placeholder={t.newLinkTitle}
+              value={editLinkIndex !== null ? editLinkTitle : newLinkTitle}
+              onChange={(e) => editLinkIndex !== null ? setEditLinkTitle(e.target.value) : setNewLinkTitle(e.target.value)}
+              className="w-full px-4 py-2 border rounded-lg mb-4"
+              maxLength={30} // Set max length for input
+            />
+            <input
+              type="text"
+              placeholder={t.newLinkUrl}
+              value={editLinkIndex !== null ? editLinkUrl : newLink}
+              onChange={(e) => editLinkIndex !== null ? setEditLinkUrl(e.target.value) : setNewLink(e.target.value)}
               className="w-full px-4 py-2 border rounded-lg mb-4"
             />
             <button
-              onClick={handleAddLink}
-              className="w-full bg-blue-500 text-white py-2 rounded-lg mb-2"
+              onClick={editLinkIndex !== null ? handleUpdateLink : handleAddLink}
+              className="w-full bg-blue-500 text-white py-2 rounded-lg mb-2 shadow-md"
             >
-              Toevoegen
+              {t.save}
             </button>
             <button
-              onClick={() => setShowLinkModal(false)}
-              className="w-full bg-gray-500 text-white py-2 rounded-lg"
+              onClick={() => {
+                setShowLinkModal(false);
+                setEditLinkIndex(null);
+                setEditLinkTitle("");
+                setEditLinkUrl("");
+              }}
+              className="w-full bg-gray-500 text-white py-2 rounded-lg shadow-md"
             >
-              Annuleren
+              {t.cancel}
             </button>
           </div>
         </div>
@@ -420,7 +529,7 @@ export default function Dashboard() {
       {showProfileModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">Contactinformatie Bewerken</h2>
+            <h2 className="text-xl font-bold mb-4">{t.editContact}</h2>
             <input
               type="text"
               placeholder="Naam"
@@ -465,15 +574,15 @@ export default function Dashboard() {
             />
             <button
               onClick={handleSaveProfile}
-              className="w-full bg-blue-500 text-white py-2 rounded-lg mb-2"
+              className="w-full bg-blue-500 text-white py-2 rounded-lg mb-2 shadow-md"
             >
-              Opslaan
+              {t.save}
             </button>
             <button
               onClick={() => setShowProfileModal(false)}
-              className="w-full bg-gray-500 text-white py-2 rounded-lg"
+              className="w-full bg-gray-500 text-white py-2 rounded-lg shadow-md"
             >
-              Annuleren
+              {t.cancel}
             </button>
           </div>
         </div>
@@ -483,7 +592,7 @@ export default function Dashboard() {
       {showBioModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">Bio Bewerken</h2>
+            <h2 className="text-xl font-bold mb-4">{t.editBio}</h2>
             <textarea
               placeholder="Schrijf je bio..."
               value={bio}
@@ -492,15 +601,15 @@ export default function Dashboard() {
             />
             <button
               onClick={handleSaveProfile}
-              className="w-full bg-blue-500 text-white py-2 rounded-lg mb-2"
+              className="w-full bg-blue-500 text-white py-2 rounded-lg mb-2 shadow-md"
             >
-              Opslaan
+              {t.save}
             </button>
             <button
               onClick={() => setShowBioModal(false)}
-              className="w-full bg-gray-500 text-white py-2 rounded-lg"
+              className="w-full bg-gray-500 text-white py-2 rounded-lg shadow-md"
             >
-              Annuleren
+              {t.cancel}
             </button>
           </div>
         </div>
@@ -510,7 +619,7 @@ export default function Dashboard() {
       {showBgColorModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">Achtergrondkleur Wijzigen</h2>
+            <h2 className="text-xl font-bold mb-4">{t.changeBgColor}</h2>
             <input
               type="color"
               value={bgColor}
@@ -519,15 +628,15 @@ export default function Dashboard() {
             />
             <button
               onClick={handleSaveProfile}
-              className="w-full bg-blue-500 text-white py-2 rounded-lg mb-2"
+              className="w-full bg-blue-500 text-white py-2 rounded-lg mb-2 shadow-md"
             >
-              Opslaan
+              {t.save}
             </button>
             <button
               onClick={() => setShowBgColorModal(false)}
-              className="w-full bg-gray-500 text-white py-2 rounded-lg"
+              className="w-full bg-gray-500 text-white py-2 rounded-lg shadow-md"
             >
-              Annuleren
+              {t.cancel}
             </button>
           </div>
         </div>
@@ -539,6 +648,19 @@ export default function Dashboard() {
           Profielgegevens succesvol opgeslagen!
         </div>
       )}
+
+      {/* Language toggle button */}
+      <div className="fixed bottom-4 right-4">
+        <button onClick={toggleLanguage} className="p-2 rounded-full shadow-md">
+          <Image
+            src={language === 'nl' ? '/nl-flag.png' : '/uk-flag.png'}
+            alt={language === 'nl' ? 'Dutch' : 'English'}
+            width={64}
+            height={64}
+            className="rounded-full" // Add class to make the image circular
+          />
+        </button>
+      </div>
     </div>
   );
 }

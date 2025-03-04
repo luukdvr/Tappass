@@ -5,6 +5,16 @@ import { useParams } from "next/navigation"; // Correcte manier om params op te 
 import supabase from "../../../supabaseClient"; // Import Supabase client
 import { FaEnvelope, FaMapMarkerAlt, FaPhone } from "react-icons/fa"; // Import icons
 import Image from "next/image"; // Import Image component
+import { useLanguage } from "../../../context/LanguageContext"; // Import Language context
+
+const translations = {
+  nl: {
+    createTappass: "Maak uw tappass",
+  },
+  en: {
+    createTappass: "Create your tappass",
+  },
+};
 
 export default function ProfilePage() {
   const [links, setLinks] = useState([]);
@@ -19,6 +29,8 @@ export default function ProfilePage() {
   const [profileImage, setProfileImage] = useState(null); // Add state for profile image URL
   const [loading, setLoading] = useState(true);
   const params = useParams(); // Haal de route params op
+  const { language } = useLanguage();
+  const t = translations[language];
 
   useEffect(() => {
     if (!params || !params.id) return;
@@ -52,7 +64,7 @@ export default function ProfilePage() {
   }, [params]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6" style={{ backgroundColor: bgColor }}>
+    <div className="min-h-screen flex flex-col items-center justify-center p-6" style={{ backgroundColor: bgColor }}>
       <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
         {loading ? (
           <p className="text-gray-600">Laden...</p>
@@ -96,13 +108,42 @@ export default function ProfilePage() {
               <p className="text-gray-600">Geen links beschikbaar</p>
             )}
             <div className="w-full max-w-md mt-6 space-y-2 text-center">
-              <h2 className="text-xl font-bold text-center text-gray-800">Contactinformatie</h2>
-              <p className="text-gray-800 flex items-center justify-center"><FaMapMarkerAlt className="mr-2" /> {address}</p>
-              <p className="text-gray-800 flex items-center justify-center"><FaEnvelope className="mr-2" /> {email}</p>
-              <p className="text-gray-800 flex items-center justify-center"><FaPhone className="mr-2" /> {phone}</p>
+              <h2 className="text-xl font-bold text-center text-gray-800">Contact</h2>
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-800 flex items-center justify-center hover:underline"
+              >
+                <FaMapMarkerAlt className="mr-2" /> {address}
+              </a>
+              <a
+                href={`mailto:${email}`}
+                className="text-gray-800 flex items-center justify-center hover:underline"
+              >
+                <FaEnvelope className="mr-2" /> {email}
+              </a>
+              <a
+                href={`tel:${phone}`}
+                className="text-gray-800 flex items-center justify-center hover:underline"
+              >
+                <FaPhone className="mr-2" /> {phone}
+              </a>
             </div>
           </>
         )}
+      </div>
+      <div className="text-center mt-4">
+        <a
+          href="https://tappass.nl/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-gray-500 hover:text-gray-700 transition"
+        >
+          {t.createTappass.split(" ").map((word, index) => (
+            word === "tappass" ? <span key={index} className="underline">{word}</span> : <span key={index}>{word} </span>
+          ))}
+        </a>
       </div>
     </div>
   );
