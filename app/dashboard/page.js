@@ -16,7 +16,6 @@ const translations = {
     logout: "Uitloggen",
     editBio: "Bio Bewerken",
     editContact: "Contactinformatie Bewerken",
-    changeBgColor: "Achtergrondkleur Wijzigen",
     yourLinks: "Jouw Links",
     newLinkTitle: "Titel van de link",
     newLinkUrl: "URL van de link",
@@ -33,7 +32,6 @@ const translations = {
     logout: "Logout",
     editBio: "Edit Bio",
     editContact: "Edit Contact Information",
-    changeBgColor: "Change Background Color",
     yourLinks: "Your Links",
     newLinkTitle: "Link Title",
     newLinkUrl: "Link URL",
@@ -55,12 +53,10 @@ export default function Dashboard() {
   const [email, setEmail] = useState(""); // Add state for email
   const [phone, setPhone] = useState(""); // Add state for phone
   const [functionTitle, setFunctionTitle] = useState(""); // Add state for function title
-  const [bgColor, setBgColor] = useState(""); // Add state for background color
   const [profileImage, setProfileImage] = useState(null); // Add state for profile image URL
   const [uploading, setUploading] = useState(false); // Add state for upload status
   const [showLinkModal, setShowLinkModal] = useState(false); // State for link modal
   const [showProfileModal, setShowProfileModal] = useState(false); // State for profile modal
-  const [showBgColorModal, setShowBgColorModal] = useState(false); // State for background color modal
   const [showBioModal, setShowBioModal] = useState(false); // State for bio modal
   const [showNotification, setShowNotification] = useState(false); // State for notification
   const [error, setError] = useState(null); // State for error
@@ -111,7 +107,6 @@ export default function Dashboard() {
         setEmail(data.email || ""); // Set email from fetched data
         setPhone(data.phone || ""); // Set phone from fetched data
         setFunctionTitle(data.functionTitle || ""); // Set function title from fetched data
-        setBgColor(data.bgColor || ""); // Set background color from fetched data
         setProfileImage(data.profileimageurl || null); // Set profile image from fetched data
       } catch (err) {
         console.error("Error loading profile:", err);
@@ -314,7 +309,6 @@ export default function Dashboard() {
         email,
         phone,
         functionTitle,
-        bgColor,
       };
       try {
         const { error } = await supabase
@@ -325,7 +319,6 @@ export default function Dashboard() {
         setShowNotification(true);
         setTimeout(() => setShowNotification(false), 3000); // Hide notification after 3 seconds
         setShowProfileModal(false);
-        setShowBgColorModal(false);
         setShowBioModal(false);
       } catch (err) {
         console.error("Error saving profile:", err);
@@ -347,7 +340,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-login p-6">
+    <div className="min-h-screen flex items-center justify-center p-6">
       <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
         <div className="flex flex-col items-center mb-6">
           <Image src="/logo%20tappass.png" alt="Tappass Logo" className="h-16 mb-4" width={256} height={256} />
@@ -406,14 +399,6 @@ export default function Dashboard() {
           className="w-full bg-blue-500 text-white py-2 rounded mb-4 shadow-md"
         >
           {t.editContact}
-        </button>
-
-        {/* Achtergrondkleur knop */}
-        <button
-          onClick={() => setShowBgColorModal(true)}
-          className="w-full bg-blue-500 text-white py-2 rounded mb-4 shadow-md"
-        >
-          {t.changeBgColor}
         </button>
 
         {/* Lijst met links */}
@@ -607,33 +592,6 @@ export default function Dashboard() {
             </button>
             <button
               onClick={() => setShowBioModal(false)}
-              className="w-full bg-gray-500 text-white py-2 rounded-lg shadow-md"
-            >
-              {t.cancel}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Achtergrondkleur modal */}
-      {showBgColorModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">{t.changeBgColor}</h2>
-            <input
-              type="color"
-              value={bgColor}
-              onChange={(e) => setBgColor(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg mb-4"
-            />
-            <button
-              onClick={handleSaveProfile}
-              className="w-full bg-blue-500 text-white py-2 rounded-lg mb-2 shadow-md"
-            >
-              {t.save}
-            </button>
-            <button
-              onClick={() => setShowBgColorModal(false)}
               className="w-full bg-gray-500 text-white py-2 rounded-lg shadow-md"
             >
               {t.cancel}

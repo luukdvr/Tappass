@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation"; // Correcte manier om params op te halen in Next.js 14+
 import supabase from "../../../supabaseClient"; // Import Supabase client
-import { FaEnvelope, FaMapMarkerAlt, FaPhone } from "react-icons/fa"; // Import icons
+import { FaEnvelope, FaMapMarkerAlt, FaPhone, FaPlus } from "react-icons/fa"; // Import icons
 import Image from "next/image"; // Import Image component
 import { useLanguage } from "../../../context/LanguageContext"; // Import Language context
 
@@ -25,7 +25,6 @@ export default function ProfilePage() {
   const [email, setEmail] = useState(""); // Add state for email
   const [phone, setPhone] = useState(""); // Add state for phone
   const [functionTitle, setFunctionTitle] = useState(""); // Add state for function title
-  const [bgColor, setBgColor] = useState(""); // Add state for background color
   const [profileImage, setProfileImage] = useState(null); // Add state for profile image URL
   const [loading, setLoading] = useState(true);
   const params = useParams(); // Haal de route params op
@@ -52,7 +51,6 @@ export default function ProfilePage() {
         setEmail(data.email || ""); // Set email from fetched data
         setPhone(data.phone || ""); // Set phone from fetched data
         setFunctionTitle(data.functionTitle || ""); // Set function title from fetched data
-        setBgColor(data.bgColor || ""); // Set background color from fetched data
         setProfileImage(data.profileimageurl || null); // Set profile image from fetched data
       } catch (error) {
         console.error("Fout bij het ophalen van profielgegevens:", error);
@@ -63,9 +61,45 @@ export default function ProfilePage() {
     fetchProfile();
   }, [params]);
 
+  const handleAddToContacts = () => {
+    const contact = {
+      name: `${name} ${surname}`,
+      email: email,
+      phone: phone,
+      address: address,
+      note: bio,
+    };
+
+    const vCard = `
+BEGIN:VCARD
+VERSION:3.0
+FN:${contact.name}
+EMAIL:${contact.email}
+TEL:${contact.phone}
+ADR:${contact.address}
+NOTE:${contact.note}
+END:VCARD
+    `;
+
+    const blob = new Blob([vCard], { type: "text/vcard" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${contact.name}.vcf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6" style={{ backgroundColor: bgColor }}>
-      <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 relative">
+      <Image
+        src="/blue-bg.jpg"
+        alt="Background"
+        layout="fill"
+        objectFit="cover"
+        className="absolute inset-0 z-0"
+      />
+      <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg relative z-10">
         {loading ? (
           <p className="text-gray-600">Laden...</p>
         ) : (
@@ -129,11 +163,17 @@ export default function ProfilePage() {
               >
                 <FaPhone className="mr-2" /> {phone}
               </a>
+              <button
+                onClick={handleAddToContacts}
+                className="mt-4 bg-green-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-green-600 transition flex items-center justify-center"
+              >
+                <FaPlus className="mr-2" /> Voeg toe aan contacten
+              </button>
             </div>
           </>
         )}
       </div>
-      <div className="text-center mt-4">
+      <div className="text-center mt-4 relative z-10">
         <a
           href="https://tappass.nl/"
           target="_blank"
