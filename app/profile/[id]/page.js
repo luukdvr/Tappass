@@ -6,6 +6,7 @@ import supabase from "../../../supabaseClient"; // Import Supabase client
 import { FaEnvelope, FaMapMarkerAlt, FaPhone, FaPlus } from "react-icons/fa"; // Import icons
 import Image from "next/image"; // Import Image component
 import { useLanguage } from "../../../context/LanguageContext"; // Import Language context
+import "../../styles/globals.css"; // Correct import path for global styles
 
 const translations = {
   nl: {
@@ -165,7 +166,7 @@ END:VCARD
               </a>
               <button
                 onClick={handleAddToContacts}
-                className="mt-4 bg-green-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-green-600 transition flex items-center justify-center"
+                className="mt-4 bg-green-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-green-600 transition flex items-center justify-center mx-auto"
               >
                 <FaPlus className="mr-2" /> Voeg toe aan contacten
               </button>

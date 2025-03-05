@@ -6,6 +6,8 @@ import supabase from "../../supabaseClient"; // Import Supabase client
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import Image from "next/image"; // Import Image component
 import { useLanguage } from "../../context/LanguageContext"; // Import Language context
+import { FaPlusCircle } from "react-icons/fa"; // Import FaPlusCircle icon
+import "../../styles/globals.css"; // Correct import path for global styles
 
 const translations = {
   nl: {
@@ -57,7 +59,6 @@ export default function Dashboard() {
   const [uploading, setUploading] = useState(false); // Add state for upload status
   const [showLinkModal, setShowLinkModal] = useState(false); // State for link modal
   const [showProfileModal, setShowProfileModal] = useState(false); // State for profile modal
-  const [showBioModal, setShowBioModal] = useState(false); // State for bio modal
   const [showNotification, setShowNotification] = useState(false); // State for notification
   const [error, setError] = useState(null); // State for error
   const router = useRouter();
@@ -319,7 +320,6 @@ export default function Dashboard() {
         setShowNotification(true);
         setTimeout(() => setShowNotification(false), 3000); // Hide notification after 3 seconds
         setShowProfileModal(false);
-        setShowBioModal(false);
       } catch (err) {
         console.error("Error saving profile:", err);
         setError(`Fout bij het opslaan van profielgegevens: ${err.message}`);
@@ -385,14 +385,6 @@ export default function Dashboard() {
 
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
-        {/* Bio knop */}
-        <button
-          onClick={() => setShowBioModal(true)}
-          className="w-full bg-blue-500 text-white py-2 rounded mb-4 shadow-md"
-        >
-          {t.editBio}
-        </button>
-
         {/* Profielinformatie knop */}
         <button
           onClick={() => setShowProfileModal(true)}
@@ -444,18 +436,18 @@ export default function Dashboard() {
         </DragDropContext>
 
         {/* Link toevoegen knop */}
-        <button
+        <div
           onClick={() => setShowLinkModal(true)}
-          className="w-full bg-blue-500 text-white py-2 rounded mt-4 shadow-md"
+          className="w-full bg-gray-100 text-gray-500 py-3 rounded-lg mt-4 shadow-md flex items-center justify-center cursor-pointer"
         >
-          {t.addLink}
-        </button>
+          <FaPlusCircle className="mr-2" /> {t.addLink}
+        </div>
 
         {/* Knop naar profielpagina */}
         <div className="text-center mt-4">
           <a
             href={`/profile/${user?.id}`}
-            className="bg-blue-500 text-white py-2 px-4 rounded text-sm shadow-md"
+            className="w-full bg-blue-500 text-white py-2 rounded-lg shadow-md block text-center"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -529,6 +521,12 @@ export default function Dashboard() {
               onChange={(e) => setSurname(e.target.value)}
               className="w-full px-4 py-2 border rounded-lg mb-4"
             />
+            <textarea
+              placeholder="Schrijf je bio..."
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              className="w-full px-4 py-2 border rounded-lg mb-4"
+            />
             <input
               type="text"
               placeholder="Functie"
@@ -565,33 +563,6 @@ export default function Dashboard() {
             </button>
             <button
               onClick={() => setShowProfileModal(false)}
-              className="w-full bg-gray-500 text-white py-2 rounded-lg shadow-md"
-            >
-              {t.cancel}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Bio modal */}
-      {showBioModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">{t.editBio}</h2>
-            <textarea
-              placeholder="Schrijf je bio..."
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg mb-4"
-            />
-            <button
-              onClick={handleSaveProfile}
-              className="w-full bg-blue-500 text-white py-2 rounded-lg mb-2 shadow-md"
-            >
-              {t.save}
-            </button>
-            <button
-              onClick={() => setShowBioModal(false)}
               className="w-full bg-gray-500 text-white py-2 rounded-lg shadow-md"
             >
               {t.cancel}
