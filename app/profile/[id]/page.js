@@ -95,15 +95,15 @@ END:VCARD
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Bekijk mijn profiel op Tappass',
-          text: 'Bekijk mijn profiel op Tappass',
+          title: "Bekijk mijn profiel op Tappass",
+          text: "Bekijk mijn profiel op Tappass",
           url: window.location.href,
         });
       } catch (err) {
-        console.error('Error sharing:', err);
+        console.error("Error sharing:", err);
       }
     } else {
-      alert('Delen is niet ondersteund op dit apparaat.');
+      alert("Delen is niet ondersteund op dit apparaat.");
     }
   };
 
