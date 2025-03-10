@@ -27,12 +27,12 @@ export default function PrivacyPage() {
           <h2 className="text-3xl font-bold mb-4">Privacybeleid</h2>
           <p className="text-lg mb-4">Laatst bijgewerkt: 17 december 2024</p>
           <p className="text-lg mb-4">
-            In dit Privacybeleid wordt beschreven hoe Tappass (de 'Site', 'wij', 'ons' of 'onze') jouw persoonlijke gegevens verzamelt, gebruikt en doorgeeft wanneer je onze services bezoekt, gebruikt of een aankoop doet bij tappass.nl (de 'Site') of op een andere manier met ons communiceert over de Site (gezamenlijk de 'Services'). Voor het doel van dit Privacybeleid verwijzen 'je' en 'jou(w)' naar jou als gebruiker van de Services, of je nu een klant, websitebezoeker of een andere persoon bent van wie we informatie hebben verzameld op grond van dit Privacybeleid.
+            In dit Privacybeleid wordt beschreven hoe Tappass (de &apos;Site&apos;, &apos;wij&apos;, &apos;ons&apos; of &apos;onze&apos;) jouw persoonlijke gegevens verzamelt, gebruikt en doorgeeft wanneer je onze services bezoekt, gebruikt of een aankoop doet bij tappass.nl (de &apos;Site&apos;) of op een andere manier met ons communiceert over de Site (gezamenlijk de &apos;Services&apos;). Voor het doel van dit Privacybeleid verwijzen &apos;je&apos; en &apos;jou(w)&apos; naar jou als gebruiker van de Services, of je nu een klant, websitebezoeker of een andere persoon bent van wie we informatie hebben verzameld op grond van dit Privacybeleid.
           </p>
           <p className="text-lg mb-4">Lees dit Privacybeleid aandachtig door.</p>
           <h3 className="text-2xl font-bold mb-2">Wijzigingen in dit Privacybeleid</h3>
           <p className="text-lg mb-4">
-            We kunnen dit Privacybeleid van tijd tot tijd bijwerken, onder meer om wijzigingen in onze werkwijzen weer te geven of om andere operationele, juridische of regelgevende redenen. We plaatsen het bijgewerkte Privacybeleid op de Site, passen de datum bij 'Laatst bijgewerkt' aan en ondernemen alle andere stappen die vereist zijn door de toepasselijke wetgeving.
+            We kunnen dit Privacybeleid van tijd tot tijd bijwerken, onder meer om wijzigingen in onze werkwijzen weer te geven of om andere operationele, juridische of regelgevende redenen. We plaatsen het bijgewerkte Privacybeleid op de Site, passen de datum bij &apos;Laatst bijgewerkt&apos; aan en ondernemen alle andere stappen die vereist zijn door de toepasselijke wetgeving.
           </p>
           <h3 className="text-2xl font-bold mb-2">Hoe wij je persoonlijke gegevens verzamelen en gebruiken</h3>
           <p className="text-lg mb-4">
@@ -43,7 +43,7 @@ export default function PrivacyPage() {
           </p>
           <h3 className="text-2xl font-bold mb-2">Welke persoonlijke gegevens we verzamelen</h3>
           <p className="text-lg mb-4">
-            Welke soort persoonlijke gegevens we over jou verkrijgen, is afhankelijk van je interacties met onze Site en je gebruik van onze Services. Wanneer we de term 'persoonlijke gegevens' gebruiken, bedoelen we gegevens die jou identificeren, betrekking op je hebben of je beschrijven of die met jou in verband kunnen worden gebracht. In de volgende secties worden de categorieën en specifieke soorten persoonlijke gegevens beschreven die we verzamelen.
+            Welke soort persoonlijke gegevens we over jou verkrijgen, is afhankelijk van je interacties met onze Site en je gebruik van onze Services. Wanneer we de term &apos;persoonlijke gegevens&apos; gebruiken, bedoelen we gegevens die jou identificeren, betrekking op je hebben of je beschrijven of die met jou in verband kunnen worden gebracht. In de volgende secties worden de categorieën en specifieke soorten persoonlijke gegevens beschreven die we verzamelen.
           </p>
           <h3 className="text-2xl font-bold mb-2">Informatie die we rechtstreeks van jou verzamelen</h3>
           <p className="text-lg mb-4">
@@ -60,14 +60,14 @@ export default function PrivacyPage() {
           </p>
           <h3 className="text-2xl font-bold mb-2">Informatie die we verzamelen over je gebruik</h3>
           <p className="text-lg mb-4">
-            We kunnen ook automatisch bepaalde informatie verzamelen over je interactie met de Services ('Gebruiksgegevens'). Hiervoor kunnen we cookies, pixels en soortgelijke technologieën gebruiken ("Cookies'). Gebruiksgegevens kunnen informatie bevatten over hoe je onze Site en je account bezoekt en gebruikt, inclusief apparaatinformatie, browserinformatie, informatie over je netwerkverbinding, je IP-adres en andere informatie over je interactie met de Services.
+            We kunnen ook automatisch bepaalde informatie verzamelen over je interactie met de Services (&apos;Gebruiksgegevens&apos;). Hiervoor kunnen we cookies, pixels en soortgelijke technologieën gebruiken (&apos;Cookies&apos;). Gebruiksgegevens kunnen informatie bevatten over hoe je onze Site en je account bezoekt en gebruikt, inclusief apparaatinformatie, browserinformatie, informatie over je netwerkverbinding, je IP-adres en andere informatie over je interactie met de Services.
           </p>
           <h3 className="text-2xl font-bold mb-2">Informatie die we verkrijgen van derden</h3>
           <p className="text-lg mb-4">
             Ten slotte kunnen we informatie over jou verkrijgen van derden, inclusief van verkopers en serviceproviders die namens ons informatie kunnen verzamelen, zoals:
           </p>
           <ul className="list-disc list-inside mb-4">
-            <li>Bedrijven die onze Site en Services ondersteunen, zoals Shopify.</li>
+            <li>Bedrijven die onze Site en Services ondersteunen.</li>
             <li>Onze betalingsverwerkers, die betalingsgegevens verzamelen (bijvoorbeeld bankrekening-, creditcard- of debitkaartgegevens, factuuradres) om je betaling te verwerken, je bestellingen uit te voeren en de door jou gevraagde producten of services te leveren, zodat we de overeenkomst die we met je hebben, kunnen uitvoeren.</li>
             <li>Wanneer je onze Site bezoekt, e-mails die we je sturen opent of erop klikt, of interactie hebt met onze Services of advertenties, kunnen wij, of derden waarmee we samenwerken, automatisch bepaalde informatie verzamelen met behulp van technologieën voor online tracking, zoals pixels, webbeacons, softwareontwikkelaarkits, bibliotheken van derden en cookies.</li>
           </ul>
@@ -106,7 +106,7 @@ export default function PrivacyPage() {
             <li>In verband met een zakelijke transactie, zoals een fusie of een faillissement, om te voldoen aan toepasselijke wettelijke verplichtingen (waaronder het reageren op dagvaardingen, huiszoekingsbevelen en soortgelijke verzoeken), om toepasselijke servicevoorwaarden af te dwingen en om de Services, onze rechten en de rechten van onze gebruikers of anderen te beschermen of te verdedigen.</li>
           </ul>
           <p className="text-lg mb-4">
-            We maken openbaar de volgende categorieën persoonlijke gegevens en gevoelige persoonlijke gegevens over gebruikers voor de doelen zoals hiervoor uiteengezet in "Hoe we je persoonlijke gegevens verzamelen en gebruiken" en "Hoe we persoonlijke gegevens openbaar maken":
+            We maken openbaar de volgende categorieën persoonlijke gegevens en gevoelige persoonlijke gegevens over gebruikers voor de doelen zoals hiervoor uiteengezet in &apos;Hoe we je persoonlijke gegevens verzamelen en gebruiken&apos; en &apos;Hoe we persoonlijke gegevens openbaar maken&apos;
           </p>
           <table className="table-auto w-full mb-4">
             <thead>
@@ -146,11 +146,11 @@ export default function PrivacyPage() {
             De Services zijn niet bedoeld voor gebruik door kinderen en wij verzamelen niet bewust persoonlijke gegevens over kinderen. Als je de ouder of voogd bent van een kind dat ons persoonlijke gegevens heeft verstrekt, kun je contact met ons opnemen via de onderstaande contactinformatie om te verzoeken dat deze worden verwijderd.
           </p>
           <p className="text-lg mb-4">
-            Vanaf de ingangsdatum van dit Privacybeleid is het ons niet daadwerkelijk bekend dat we persoonlijke gegevens van personen jonger dan 16 jaar 'delen' of 'verkopen' (zoals deze termen worden gedefinieerd in de toepasselijke wetgeving).
+            Vanaf de ingangsdatum van dit Privacybeleid is het ons niet daadwerkelijk bekend dat we persoonlijke gegevens van personen jonger dan 16 jaar &apos;delen&apos; of &apos;verkopen&apos; (zoals deze termen worden gedefinieerd in de toepasselijke wetgeving).
           </p>
           <h3 className="text-2xl font-bold mb-2">Beveiliging en bewaring van je gegevens</h3>
           <p className="text-lg mb-4">
-            Houd er rekening mee dat geen enkele beveiligingsmaatregel perfect of ondoordringbaar is en dat we geen 'perfecte beveiliging' kunnen garanderen. Bovendien is het mogelijk dat gegevens die je ons stuurt, tijdens verzending niet veilig is. We raden je aan geen onveilige kanalen te gebruiken om gevoelige of vertrouwelijke informatie naar ons te communiceren.
+            Houd er rekening mee dat geen enkele beveiligingsmaatregel perfect of ondoordringbaar is en dat we geen &apos;perfecte beveiliging&apos; kunnen garanderen. Bovendien is het mogelijk dat gegevens die je ons stuurt, tijdens verzending niet veilig is. We raden je aan geen onveilige kanalen te gebruiken om gevoelige of vertrouwelijke informatie naar ons te communiceren.
           </p>
           <p className="text-lg mb-4">
             Hoelang we je persoonlijke gegevens bewaren, hangt af van verschillende factoren, zoals of we de gegevens nodig hebben om je account te onderhouden, om de Services te leveren, om te voldoen aan wettelijke verplichtingen, om geschillen op te lossen of om aan andere geldende contracten en beleidsregels te voldoen.
@@ -201,7 +201,7 @@ export default function PrivacyPage() {
             <Link href="/privacy" legacyBehavior><a className="text-gray-600 hover:text-gray-800 transition">Privacy</a></Link>
             <Link href="/refund" legacyBehavior><a className="text-gray-600 hover:text-gray-800 transition">Terugbetalingsbeleid</a></Link>
           </div>
-          <p className="text-gray-600">© 2023 Tappass. Alle rechten voorbehouden.</p>
+          <p className="text-gray-600">© 2024 Tappass. Alle rechten voorbehouden.</p>
         </div>
       </footer>
     </div>

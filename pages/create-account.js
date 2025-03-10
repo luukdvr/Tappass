@@ -32,7 +32,7 @@ export default function CreateAccountPage() {
 
       setSuccess(true);
       router.push('/dashboard');
-    } catch (err) {
+    } catch (error) {
       setError('Er is iets misgegaan. Probeer het later opnieuw.');
     }
   };
