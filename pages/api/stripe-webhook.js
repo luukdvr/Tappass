@@ -1,6 +1,6 @@
 import { buffer } from 'micro';
 import { createClient } from '@supabase/supabase-js';
-import { stripe } from '../../lib/stripe';
+import { stripe } from '../../lib/stripe'; // Ensure this path is correct
 
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
