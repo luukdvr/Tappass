@@ -91,6 +91,22 @@ END:VCARD
     URL.revokeObjectURL(url);
   };
 
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Bekijk mijn profiel op Tappass',
+          text: 'Bekijk mijn profiel op Tappass',
+          url: window.location.href,
+        });
+      } catch (err) {
+        console.error('Error sharing:', err);
+      }
+    } else {
+      alert('Delen is niet ondersteund op dit apparaat.');
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 relative">
       <Image
@@ -101,6 +117,17 @@ END:VCARD
         className="absolute inset-0 z-0"
       />
       <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg relative z-10">
+        <button
+          onClick={handleShare}
+          className="absolute top-4 right-4"
+        >
+          <Image
+            src="/share.png"
+            alt="Deel Profiel"
+            width={24}
+            height={24}
+          />
+        </button>
         {loading ? (
           <p className="text-gray-600">Laden...</p>
         ) : (
