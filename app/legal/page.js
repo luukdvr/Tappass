@@ -26,7 +26,7 @@ export default function LegalPage() {
         <div className="max-w-3xl mx-auto text-left px-4"> {/* Reduce max width and add padding */}
           <h2 className="text-3xl font-bold mb-4">Wettelijke kennisgeving</h2>
           <p className="text-lg mb-4">
-            De inhoud van de Tappass-website, inclusief maar niet beperkt tot teksten, afbeeldingen, logo's, grafische ontwerpen, iconen, software en andere materialen (gezamenlijk "Inhoud"), is eigendom van Tappass of haar licentiegevers en wordt beschermd door de toepasselijke auteursrechten, merken, handelsgeheimen en andere intellectuele eigendomsrechten.
+            De inhoud van de Tappass-website, inclusief maar niet beperkt tot teksten, afbeeldingen, logo&apos;s, grafische ontwerpen, iconen, software en andere materialen (gezamenlijk &quot;Inhoud&quot;), is eigendom van Tappass of haar licentiegevers en wordt beschermd door de toepasselijke auteursrechten, merken, handelsgeheimen en andere intellectuele eigendomsrechten.
           </p>
           <h3 className="text-2xl font-bold mb-2">Intellectuele Eigendom</h3>
           <p className="text-lg mb-4">

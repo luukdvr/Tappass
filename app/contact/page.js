@@ -39,7 +39,7 @@ export default function ContactPage() {
       } else {
         setError("Er is iets misgegaan. Probeer het later opnieuw.");
       }
-    } catch (err) {
+    } catch {
       setError("Er is iets misgegaan. Probeer het later opnieuw.");
     }
   };
