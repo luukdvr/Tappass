@@ -76,7 +76,7 @@ export default function FAQPage() {
           </p>
           <h3 className="text-2xl font-bold mb-2">❓ Hoe snel wordt mijn kaart geleverd?</h3>
           <p className="text-lg mb-4">
-            We versturen jouw Tappass-kaart binnen 2 werkdagen na bestelling. De levertijd hangt daarna af van de bezorgdienst, maar meestal heb je ‘m binnen 3-5 werkdagen in huis.
+            We versturen jouw Tappass-kaart binnen 2 werkdagen na bestelling. De levertijd hangt daarna af van de bezorgdienst, maar meestal heb je &apos;m binnen 3-5 werkdagen in huis.
           </p>
           <h3 className="text-2xl font-bold mb-2">❓ Hoe neem ik contact op met Tappass?</h3>
           <p className="text-lg mb-4">
