@@ -22,7 +22,7 @@ export default function CreateAccountPage() {
     }
 
     try {
-      const { error: updateError } = await supabase.auth.api.updateUserById(user_id, {
+      const { updateError } = await supabase.auth.api.updateUserById(user_id, {
         password: password,
       });
 
@@ -32,7 +32,7 @@ export default function CreateAccountPage() {
 
       setSuccess(true);
       router.push('/dashboard');
-    } catch (error) {
+    } catch (err) {
       setError('Er is iets misgegaan. Probeer het later opnieuw.');
     }
   };

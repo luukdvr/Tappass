@@ -107,15 +107,15 @@ export default function HomePage() {
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-4"> {/* Add padding for consistent spacing */}
             <div className="bg-white p-6 rounded-2xl shadow-lg w-full"> {/* Ensure consistent width */}
-              <p className="text-gray-800">"Tappass heeft mijn netwerkervaring enorm verbeterd. Het is zo eenvoudig te gebruiken!"</p>
+              <p className="text-gray-800">&ldquo;Tappass heeft mijn netwerkervaring enorm verbeterd. Het is zo eenvoudig te gebruiken!&rdquo;</p>
               <p className="text-gray-600 mt-2">- Jan de Vries</p>
             </div>
             <div className="bg-white p-6 rounded-2xl shadow-lg w-full"> {/* Ensure consistent width */}
-              <p className="text-gray-800">"Ik kan nu al mijn contacten beheren met slechts één scan. Geweldig!"</p>
+              <p className="text-gray-800">&ldquo;Ik kan nu al mijn contacten beheren met slechts één scan. Geweldig!&rdquo;</p>
               <p className="text-gray-600 mt-2">- Maria Janssen</p>
             </div>
             <div className="bg-white p-6 rounded-2xl shadow-lg w-full"> {/* Ensure consistent width */}
-              <p className="text-gray-800">"Tappass heeft mijn professionele netwerk naar een hoger niveau getild. Een must-have voor iedereen!"</p>
+              <p className="text-gray-800">&ldquo;Tappass heeft mijn professionele netwerk naar een hoger niveau getild. Een must-have voor iedereen!&rdquo;</p>
               <p className="text-gray-600 mt-2">- Peter van Dam</p>
             </div>
           </div>
