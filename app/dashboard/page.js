@@ -7,6 +7,8 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import Image from "next/image"; // Import Image component
 import { useLanguage } from "../../context/LanguageContext"; // Import Language context
 import { FaPlusCircle } from "react-icons/fa"; // Import FaPlusCircle icon
+import Cropper from "react-easy-crop"; // Import Cropper component
+import getCroppedImg from "../../utils/cropImage"; // Import utility function for cropping
 import "../../styles/globals.css"; // Correct import path for global styles
 
 const translations = {
@@ -25,6 +27,7 @@ const translations = {
     cancel: "Annuleren",
     newLink: "Nieuwe Link Toevoegen",
     editLink: "Link Bewerken",
+    addDesign: "Pas Design Toevoegen", // Add translation for add design button
   },
   en: {
     edit: "Edit",
@@ -41,6 +44,7 @@ const translations = {
     cancel: "Cancel",
     newLink: "Add New Link",
     editLink: "Edit Link",
+    addDesign: "Add Design", // Add translation for add design button
   },
 };
 
@@ -61,6 +65,12 @@ export default function Dashboard() {
   const [showProfileModal, setShowProfileModal] = useState(false); // State for profile modal
   const [showNotification, setShowNotification] = useState(false); // State for notification
   const [error, setError] = useState(null); // State for error
+  const [showDesignModal, setShowDesignModal] = useState(false); // State for design modal
+  const [imageSrc, setImageSrc] = useState(null); // State for uploaded image source
+  const [crop, setCrop] = useState({ x: 0, y: 0 }); // State for crop position
+  const [zoom, setZoom] = useState(1); // State for zoom level
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null); // State for cropped area pixels
+  const [designImage, setDesignImage] = useState(null); // State for design image URL
   const router = useRouter();
   const [user, setUser] = useState(null); // State for user
   const [editLinkIndex, setEditLinkIndex] = useState(null); // State for editing link index
@@ -299,6 +309,79 @@ export default function Dashboard() {
     }
   };
 
+  // Handle image upload
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImageSrc(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Handle crop complete
+  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  }, []);
+
+  // Handle save design
+  const handleSaveDesign = async () => {
+    try {
+      const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels);
+      const { data, error } = await supabase.storage
+        .from('designs') // Gebruik de juiste bucketnaam
+        .upload(`design-${Date.now()}.png`, croppedImage, {
+          contentType: 'image/png'
+        });
+
+      if (error) {
+        throw error;
+      }
+
+      const { publicUrl } = supabase.storage
+        .from('designs')
+        .getPublicUrl(data.path);
+
+      setDesignImage(publicUrl);
+      setShowDesignModal(false);
+      setImageSrc(null);
+      setCrop({ x: 0, y: 0 });
+      setZoom(1);
+    } catch (err) {
+      console.error("Error saving design:", err);
+      setError(`Fout bij het opslaan van het design: ${err.message}`);
+    }
+  };
+
+  // Handle delete design
+  const handleDeleteDesign = async () => {
+    if (!designImage) {
+      setError("Geen design om te verwijderen.");
+      return;
+    }
+
+    try {
+      const filePath = designImage.split('/').pop();
+      const { error } = await supabase.storage
+        .from('designs')
+        .remove([filePath]);
+
+      if (error) {
+        throw error;
+      }
+
+      setDesignImage(null);
+      setImageSrc(null);
+      setCrop({ x: 0, y: 0 });
+      setZoom(1);
+    } catch (err) {
+      console.error("Error deleting design:", err);
+      setError(`Fout bij het verwijderen van het design: ${err.message}`);
+    }
+  };
+
   // Update bio and other profile information
   const handleSaveProfile = async () => {
     if (user) {
@@ -455,6 +538,14 @@ export default function Dashboard() {
           </a>
         </div>
 
+        {/* Pas design toevoegen knop */}
+        <button
+          onClick={() => setShowDesignModal(true)}
+          className="w-full bg-blue-500 text-white py-2 rounded mb-4 shadow-md"
+        >
+          {t.addDesign}
+        </button>
+
         {/* Uitlogknop */}
         <button onClick={handleLogout} className="w-full bg-red-500 text-white py-2 rounded mt-4 shadow-md">
           {t.logout}
@@ -566,6 +657,68 @@ export default function Dashboard() {
               className="w-full bg-gray-500 text-white py-2 rounded-lg shadow-md"
             >
               {t.cancel}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Design upload modal */}
+      {showDesignModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+            <h2 className="text-xl font-bold mb-4">Upload je design</h2>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="w-full px-4 py-2 border rounded-lg mb-4"
+            />
+            {designImage && !imageSrc && (
+              <div className="relative w-full h-64 bg-gray-200 mb-4">
+                <Image
+                  src={designImage}
+                  alt="Design"
+                  layout="fill"
+                  objectFit="contain"
+                />
+                <button
+                  onClick={handleDeleteDesign}
+                  className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
+                >
+                  &times;
+                </button>
+              </div>
+            )}
+            {imageSrc && (
+              <div className="relative w-full h-64 bg-gray-200 mb-4">
+                <Cropper
+                  image={imageSrc}
+                  crop={crop}
+                  zoom={zoom}
+                  aspect={1012 / 638}
+                  onCropChange={setCrop}
+                  onZoomChange={setZoom}
+                  onCropComplete={onCropComplete}
+                />
+                <button
+                  onClick={handleDeleteDesign}
+                  className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
+                >
+                  &times;
+                </button>
+              </div>
+            )}
+            <button
+              onClick={handleSaveDesign}
+              className="w-full bg-blue-500 text-white py-2 rounded-lg mb-2 shadow-md"
+            >
+              Opslaan
+            </button>
+            <button
+              onClick={() => setShowDesignModal(false)}
+              className="w-full bg-gray-500 text-white py-2 rounded-lg shadow-md"
+            >
+              Annuleren
             </button>
           </div>
         </div>

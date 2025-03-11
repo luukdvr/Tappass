@@ -57,7 +57,7 @@ export default function HomePage() {
               <p className="text-gray-600">Maak een sterke eerste indruk met een modern visitekaartje.</p>
             </div>
           </div>
-          <a href="https://buy.stripe.com/28o7tz89c0bJ97aaEE" className="bg-blue-500 text-white py-3 px-6 rounded-2xl shadow-lg hover:bg-blue-600 transition mt-8 inline-block">
+          <a href="https://buy.stripe.com/5kA7tzgFIe2z6Z2fYZ" className="bg-blue-500 text-white py-3 px-6 rounded-2xl shadow-lg hover:bg-blue-600 transition mt-8 inline-block">
             Bestel nu
           </a>
         </div>
