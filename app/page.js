@@ -15,7 +15,7 @@ export default function HomePage() {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
         setUser(session.user);
-        const { data: userData, error } = await supabase
+        const { data: userData} = await supabase
           .from('users')
           .select('is_subscribed')
           .eq('id', session.user.id)
