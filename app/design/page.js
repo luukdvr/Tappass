@@ -31,7 +31,6 @@ export default function DesignPage() {
   const [zoom, setZoom] = useState(1); // State for zoom level
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null); // State for cropped area pixels
   const [designImage, setDesignImage] = useState(null); // State for design image URL
-  const [error, setError] = useState(null); // State for error
   const [previewImage, setPreviewImage] = useState(null); // State for preview image
   const router = useRouter();
   const { language, toggleLanguage } = useLanguage();
