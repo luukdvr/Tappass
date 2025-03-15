@@ -40,7 +40,7 @@ export default function LoginPage() {
         setError(t.loginError);
       } else {
         // Check if the user is subscribed
-        const { data: userData, error: userError } = await supabase
+        const { error: userError } = await supabase
           .from('users')
           .select('is_subscribed')
           .eq('id', data.user.id)

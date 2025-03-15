@@ -58,15 +58,11 @@ export default function DesignPage() {
   const handleSaveDesign = async () => {
     try {
       const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels);
-      const { data, error } = await supabase.storage
+      const { data } = await supabase.storage
         .from('designs') // Use the correct bucket name
         .upload(`design-${Date.now()}.png`, croppedImage, {
           contentType: 'image/png'
         });
-
-      if (error) {
-        throw error;
-      }
 
       const { publicUrl } = supabase.storage
         .from('designs')
