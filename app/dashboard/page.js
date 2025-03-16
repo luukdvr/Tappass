@@ -68,7 +68,7 @@ export default function Dashboard() {
   const [editLinkUrl, setEditLinkUrl] = useState(""); // State for editing link URL
   const { language, toggleLanguage } = useLanguage();
   const t = translations[language];
-  const [isSubscribed, setIsSubscribed] = useState(false); // State for subscription status
+  const [is_subscribed, setIsSubscribed] = useState(false); // State for subscription status
 
   // Fetch the current user
   useEffect(() => {
@@ -79,7 +79,7 @@ export default function Dashboard() {
         setError("Fout bij het ophalen van gebruikersgegevens. Probeer het later opnieuw.");
       } else {
         setUser(data.user);
-        setIsSubscribed(data.user.isSubscribed); // Set subscription status
+        setIsSubscribed(data.user.is_subscribed); // Set subscription status
       }
     };
 
@@ -120,18 +120,32 @@ export default function Dashboard() {
 
   // Controleer of de gebruiker is ingelogd en heeft een abonnement
   useEffect(() => {
-    if (user === null) {
-      // Wait for user state to be determined
-      return;
-    }
-    if (!user) {
-      router.push("/auth/login");
-    } else if (!isSubscribed) {
-      window.location.href = 'https://buy.stripe.com/5kA7tzgFIe2z6Z2fYZ'; // Redirect to subscription page
-    } else {
-      loadProfile();
-    }
-  }, [user, isSubscribed, router, loadProfile]);
+    const checkSubscription = async () => {
+      if (user === null) {
+        // Wait for user state to be determined
+        return;
+      }
+      if (!user) {
+        router.push("/auth/login");
+      } else {
+        const { data, error } = await supabase
+          .from("users")
+          .select("is_subscribed")
+          .eq("id", user.id)
+          .single();
+        if (error) {
+          console.error("Error checking subscription:", error);
+          setError(`Fout bij het controleren van het abonnement: ${error.message}`);
+        } else if (!data.is_subscribed) {
+          window.location.href = '/design'; // Redirect to subscription page
+        } else {
+          loadProfile();
+        }
+      }
+    };
+
+    checkSubscription();
+  }, [user, router, loadProfile]);
 
   // Voeg een nieuwe link toe
   const handleAddLink = async () => {
