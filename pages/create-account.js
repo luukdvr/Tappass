@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { createClient } from '@supabase/supabase-js';
-
-let supabase;
+import supabase from '../supabaseClient';
 
 export default function CreateAccountPage() {
   const router = useRouter();
@@ -10,18 +8,6 @@ export default function CreateAccountPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
-
-  useEffect(() => {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-    if (!supabaseUrl || !supabaseAnonKey) {
-      setError('Supabase configuratie ontbreekt.');
-      return;
-    }
-
-    supabase = createClient(supabaseUrl, supabaseAnonKey);
-  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,18 +20,17 @@ export default function CreateAccountPage() {
     }
 
     try {
-      const { updateError } = await supabase.auth.api.updateUserById(user_id, {
+      const { error: updateError } = await supabase.auth.api.updateUserById(user_id, {
         password: password,
       });
 
       if (updateError) {
-        throw updateError;
+        setError(updateError.message);
+      } else {
+        setSuccess(true);
       }
-
-      setSuccess(true);
-      router.push('/dashboard');
-    } catch {
-      setError('Er is iets misgegaan. Probeer het later opnieuw.');
+    } catch (error) {
+      setError(error.message);
     }
   };
 
