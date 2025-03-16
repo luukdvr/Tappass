@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import supabase from "../../supabaseClient"; // Import Supabase client
 import Image from "next/image"; // Import Image component
 import Cropper from "react-easy-crop"; // Import Cropper component
 import getCroppedImg from "../../utils/cropImage"; // Import utility function for cropping
-import { useRouter } from "next/navigation";
 import { useLanguage } from "../../context/LanguageContext"; // Import Language context
 
 const translations = {
@@ -32,9 +32,35 @@ export default function DesignPage() {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null); // State for cropped area pixels
   const [designImage, setDesignImage] = useState(null); // State for design image URL
   const [previewImage, setPreviewImage] = useState(null); // State for preview image
+  const [user, setUser] = useState(null); // State for user
   const router = useRouter();
   const { language, toggleLanguage } = useLanguage();
   const t = translations[language];
+
+  // Fetch the current user
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data, error } = await supabase.auth.getUser();
+      if (error) {
+        console.error("Error fetching user:", error);
+      } else {
+        setUser(data.user);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (user === null) {
+      // Wait for user state to be determined
+      return;
+    }
+    if (!user) {
+      router.push(`/auth/login?redirectedFrom=/design`);
+    }
+  }, [user, router]);
 
   // Handle image upload
   const handleImageUpload = (event) => {
@@ -190,6 +216,12 @@ export default function DesignPage() {
         >
           {t.cancel}
         </button>
+        <a
+          href="https://buy.stripe.com/5kA7tzgFIe2z6Z2fYZ"
+          className="w-full bg-green-500 text-white py-2 rounded-lg mt-4 shadow-md text-center block"
+        >
+          Bestel nu
+        </a>
         {previewImage && (
           <div className="mt-4">
             <h3 className="text-lg font-bold mb-2">{t.preview}</h3>
