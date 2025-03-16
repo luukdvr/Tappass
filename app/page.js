@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import supabase from "../supabaseClient"; // Import Supabase client
 import "./styles/globals.css"; // Import global styles
 
 export default function HomePage() {
   const [user, setUser] = useState(null);
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -39,6 +41,14 @@ export default function HomePage() {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     window.location.reload();
+  };
+
+  const handleOrderNowClick = () => {
+    if (user) {
+      router.push("/design");
+    } else {
+      router.push("/auth/login?redirectedFrom=/design");
+    }
   };
 
   return (
@@ -105,9 +115,9 @@ export default function HomePage() {
               <p className="text-gray-600">Maak een sterke eerste indruk met een modern visitekaartje.</p>
             </div>
           </div>
-          <a href="https://tappass.nl/design" className="bg-blue-500 text-white py-3 px-6 rounded-2xl shadow-lg hover:bg-blue-600 transition mt-8 inline-block">
+          <button onClick={handleOrderNowClick} className="bg-blue-500 text-white py-3 px-6 rounded-2xl shadow-lg hover:bg-blue-600 transition mt-8 inline-block">
             Bestel nu
-          </a>
+          </button>
         </div>
       </div>
 

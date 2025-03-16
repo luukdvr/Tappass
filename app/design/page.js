@@ -146,6 +146,9 @@ export default function DesignPage() {
   return (
     <div className="min-h-screen flex items-center justify-center p-6">
       <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
+        <div className="flex justify-center mb-6">
+                  <Image src="/logo%20tappass.png" alt="Tappass Logo" width={256} height={256} />
+                </div>
         <h2 className="text-xl font-bold mb-4">{t.uploadDesign}</h2>
         <input
           type="file"
