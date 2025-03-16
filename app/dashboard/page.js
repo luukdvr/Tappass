@@ -68,7 +68,6 @@ export default function Dashboard() {
   const [editLinkUrl, setEditLinkUrl] = useState(""); // State for editing link URL
   const { language, toggleLanguage } = useLanguage();
   const t = translations[language];
-  const [is_subscribed, setIsSubscribed] = useState(false); // State for subscription status
 
   // Fetch the current user
   useEffect(() => {
