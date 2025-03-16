@@ -68,6 +68,7 @@ export default function Dashboard() {
   const [editLinkUrl, setEditLinkUrl] = useState(""); // State for editing link URL
   const { language, toggleLanguage } = useLanguage();
   const t = translations[language];
+  const [isSubscribed, setIsSubscribed] = useState(false); // State for subscription status
 
   // Fetch the current user
   useEffect(() => {
@@ -78,6 +79,7 @@ export default function Dashboard() {
         setError("Fout bij het ophalen van gebruikersgegevens. Probeer het later opnieuw.");
       } else {
         setUser(data.user);
+        setIsSubscribed(data.user.isSubscribed); // Set subscription status
       }
     };
 
@@ -116,7 +118,7 @@ export default function Dashboard() {
     }
   }, [user]);
 
-  // Controleer of de gebruiker is ingelogd
+  // Controleer of de gebruiker is ingelogd en heeft een abonnement
   useEffect(() => {
     if (user === null) {
       // Wait for user state to be determined
@@ -124,10 +126,12 @@ export default function Dashboard() {
     }
     if (!user) {
       router.push("/auth/login");
+    } else if (!isSubscribed) {
+      window.location.href = 'https://buy.stripe.com/5kA7tzgFIe2z6Z2fYZ'; // Redirect to subscription page
     } else {
       loadProfile();
     }
-  }, [user, router, loadProfile]);
+  }, [user, isSubscribed, router, loadProfile]);
 
   // Voeg een nieuwe link toe
   const handleAddLink = async () => {

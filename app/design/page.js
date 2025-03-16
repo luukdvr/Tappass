@@ -83,6 +83,15 @@ export default function DesignPage() {
   const handleSaveDesign = async () => {
     try {
       const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels);
+
+      // Remove the old design image if it exists
+      if (designImage) {
+        const oldFilePath = designImage.split('/').pop();
+        await supabase.storage
+          .from('designs')
+          .remove([oldFilePath]);
+      }
+
       const { data } = await supabase.storage
         .from('designs') // Use the correct bucket name
         .upload(`design-${Date.now()}.png`, croppedImage, {
@@ -97,7 +106,6 @@ export default function DesignPage() {
       setImageSrc(null);
       setCrop({ x: 0, y: 0 });
       setZoom(1);
-      router.push("/dashboard");
     } catch (err) {
       console.error("Error saving design:", err);
       setError(`Fout bij het opslaan van het design: ${err.message}`);
@@ -147,8 +155,8 @@ export default function DesignPage() {
     <div className="min-h-screen flex items-center justify-center p-6">
       <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
         <div className="flex justify-center mb-6">
-                  <Image src="/logo%20tappass.png" alt="Tappass Logo" width={256} height={256} />
-                </div>
+          <Image src="/logo%20tappass.png" alt="Tappass Logo" width={256} height={256} />
+        </div>
         <h2 className="text-xl font-bold mb-4">{t.uploadDesign}</h2>
         <input
           type="file"
