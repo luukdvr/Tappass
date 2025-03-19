@@ -1,11 +1,9 @@
-module.exports = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'zrcpbcemxcolgulecknv.supabase.co',
-        pathname: '/storage/v1/object/public/avatars/**',
-      },
-    ],
+    domains: ['zrcpbcemxcolgulecknv.supabase.co'], // Voeg de Supabase-hostnaam toe
   },
 };
+
+module.exports = nextConfig;

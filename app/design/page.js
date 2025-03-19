@@ -33,6 +33,7 @@ export default function DesignPage() {
   const [designImage, setDesignImage] = useState(null); // State for design image URL
   const [previewImage, setPreviewImage] = useState(null); // State for preview image
   const [user, setUser] = useState(null); // State for user
+  const [error, setError] = useState(null); // State for error messages
   const router = useRouter();
   const { language, toggleLanguage } = useLanguage();
   const t = translations[language];
@@ -87,20 +88,51 @@ export default function DesignPage() {
       // Remove the old design image if it exists
       if (designImage) {
         const oldFilePath = designImage.split('/').pop();
-        await supabase.storage
-          .from('designs')
+        const { error: deleteError } = await supabase.storage
+          .from('designs') // Correct bucket name
           .remove([oldFilePath]);
+
+        if (deleteError) {
+          console.error("Error deleting old design:", deleteError);
+          throw deleteError;
+        }
       }
 
-      const { data } = await supabase.storage
-        .from('designs') // Use the correct bucket name
+      const { data, error: uploadError } = await supabase.storage
+        .from('designs') // Correct bucket name
         .upload(`design-${Date.now()}.png`, croppedImage, {
-          contentType: 'image/png'
+          contentType: 'image/png',
         });
 
-      const { publicUrl } = supabase.storage
+      if (uploadError) {
+        console.error("Error uploading design:", uploadError);
+        throw uploadError;
+      }
+
+      // Retrieve the public URL
+      const { data: publicUrlData, error: publicUrlError } = supabase.storage
         .from('designs')
         .getPublicUrl(data.path);
+
+      if (publicUrlError || !publicUrlData.publicUrl) {
+        console.error("Error retrieving public URL:", publicUrlError);
+        throw new Error("Failed to retrieve public URL for the uploaded design.");
+      }
+
+      const publicUrl = publicUrlData.publicUrl;
+
+      // Save the public URL to the database
+      const { error: dbError } = await supabase
+        .from('users') // Correct table name
+        .upsert({
+          id: user.id, // Ensure this matches the user's ID
+          pasimageurl: publicUrl, // Correct column name
+        }, { onConflict: 'id' }); // Ensure only one entry per user
+
+      if (dbError) {
+        console.error("Error saving design URL to database:", dbError);
+        throw dbError;
+      }
 
       setDesignImage(publicUrl);
       setImageSrc(null);
@@ -108,7 +140,7 @@ export default function DesignPage() {
       setZoom(1);
     } catch (err) {
       console.error("Error saving design:", err);
-      setError(`Fout bij het opslaan van het design: ${err.message}`);
+      setError(`Fout bij het opslaan van het design: ${err.message || err}`);
     }
   };
 
@@ -209,6 +241,7 @@ export default function DesignPage() {
             </button>
           </div>
         )}
+        {error && <div className="text-red-500 mb-4">{error}</div>}
         <button
           onClick={handlePreviewDesign}
           className="w-full bg-gray-500 text-white py-2 rounded-lg mb-2 shadow-md"
