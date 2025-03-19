@@ -604,7 +604,7 @@ export default function Dashboard() {
             alt={language === 'nl' ? 'Dutch' : 'English'}
             width={64}
             height={64}
-            className="rounded-full" // Add class to make the image circular
+            className="rounded-full" // Maak de afbeelding cirkelvormig
           />
         </button>
       </div>

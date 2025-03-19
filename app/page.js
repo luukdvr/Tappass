@@ -6,10 +6,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import supabase from "../supabaseClient"; // Import Supabase client
 import "./styles/globals.css"; // Import global styles
+import { useLanguage } from '../context/LanguageContext'; // Zorg ervoor dat een taalcontext wordt gebruikt
 
 export default function HomePage() {
+  const { t } = useLanguage(); // Gebruik de vertaalfunctie uit de context
   const [user, setUser] = useState(null);
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [accountPopupOpen, setAccountPopupOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -51,33 +55,142 @@ export default function HomePage() {
     }
   };
 
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
+  const toggleAccountPopup = () => {
+    setAccountPopupOpen(!accountPopupOpen);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-white"> {/* Set background to white */}
       {/* Header */}
-      <header className="w-full bg-white shadow-lg py-4 px-6 flex justify-center items-center relative">
+      <header className="w-full bg-white shadow-lg py-4 px-6 flex justify-between items-center">
         <Link href="/" legacyBehavior>
           <a>
             <Image src="/logo%20tappass.png" alt="Tappass Logo" width={225} height={75} />
           </a>
         </Link>
-        <div className="absolute right-6 flex space-x-4">
+        <div className="flex items-center space-x-4"> {/* Flex container for icons */}
+          {/* Burger Icon */}
+          <button
+            onClick={toggleMenu}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0,
+            }}
+          >
+            <Image src="/burger-bar.png" alt="Menu" width={30} height={30} />
+          </button>
+
+          {/* Account Icon */}
+          <button
+            onClick={toggleAccountPopup}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0,
+            }}
+          >
+            <Image src="/account.png" alt="Account" width={30} height={30} />
+          </button>
+        </div>
+      </header>
+
+      {/* Popup Menu */}
+      {menuOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: '#fff',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+          }}
+        >
+          <button
+            onClick={toggleMenu}
+            style={{
+              position: 'absolute',
+              top: '20px',
+              right: '20px',
+              background: 'none',
+              border: 'none',
+              fontSize: '24px',
+              cursor: 'pointer',
+            }}
+          >
+            ✕
+          </button>
+          <nav style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+          <a href="/dashboard" style={{ textDecoration: 'none', fontSize: '18px', color: '#000' }}>Dashboard</a>
+            <a href="/design" style={{ textDecoration: 'none', fontSize: '18px', color: '#000' }}>Pas ontwerpen</a>
+            <a href="/faq" style={{ textDecoration: 'none', fontSize: '18px', color: '#000' }}>FAQ</a>
+            <a href="/pricing" style={{ textDecoration: 'none', fontSize: '18px', color: '#000' }}>Prijzen</a>
+            <a href="/contact" style={{ textDecoration: 'none', fontSize: '18px', color: '#000' }}>Contact</a>
+          </nav>
+        </div>
+      )}
+
+      {/* Account Popup */}
+      {accountPopupOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: '#fff',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+          }}
+        >
+          <button
+            onClick={toggleAccountPopup}
+            style={{
+              position: 'absolute',
+              top: '20px',
+              right: '20px',
+              background: 'none',
+              border: 'none',
+              fontSize: '24px',
+              cursor: 'pointer',
+            }}
+          >
+            ✕
+          </button>
+          <nav style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
           {user ? (
             <>
-              <button onClick={handleLogout} className="text-blue-500 hover:text-blue-700 transition">Uitloggen</button>
-              <button onClick={handleDashboardClick} className="text-blue-500 hover:text-blue-700 transition">Dashboard</button>
+              <button onClick={handleLogout} className="text-blue-500 hover:text-blue-700 transition">{t.logout}</button>
             </>
           ) : (
             <>
               <Link href="/auth/login" legacyBehavior>
-                <a className="text-blue-500 hover:text-blue-700 transition">Inloggen</a>
+                <a className="text-blue-500 hover:text-blue-700 transition">{t.login}</a>
               </Link>
               <Link href="/auth/register" legacyBehavior>
-                <a className="text-blue-500 hover:text-blue-700 transition">Aanmelden</a>
+                <a className="text-blue-500 hover:text-blue-700 transition">{t.register}</a>
               </Link>
             </>
           )}
+          </nav>
         </div>
-      </header>
+      )}
 
       {/* Banner */}
       <div className="relative w-full h-[36rem]"> {/* Double the height */}

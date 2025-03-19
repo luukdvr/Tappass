@@ -13,6 +13,9 @@ const translations = {
     password: "Wachtwoord",
     loginError: "Fout bij inloggen. Controleer je gegevens en probeer opnieuw.",
     invalidCredentials: "Geen account gevonden met deze gegevens. Controleer je gegevens en probeer opnieuw.",
+    forgotPassword: "Wachtwoord vergeten?",
+    resetEmailSent: "Een e-mail om je wachtwoord te resetten is verzonden.",
+    resetError: "Er is een fout opgetreden bij het verzenden van de reset e-mail.",
   },
   en: {
     login: "Login",
@@ -20,6 +23,9 @@ const translations = {
     password: "Password",
     loginError: "Error logging in. Please check your credentials and try again.",
     invalidCredentials: "No account found with these credentials. Please check your credentials and try again.",
+    forgotPassword: "Forgot Password?",
+    resetEmailSent: "An email to reset your password has been sent.",
+    resetError: "An error occurred while sending the reset email.",
   },
 };
 
@@ -27,6 +33,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [resetMessage, setResetMessage] = useState("");
   const router = useRouter();
   const { language, toggleLanguage } = useLanguage();
   const t = translations[language];
@@ -59,6 +66,26 @@ export default function LoginPage() {
     }
   };
 
+  const handlePasswordReset = async () => {
+    if (!email.trim()) {
+      setError(t.invalidCredentials);
+      return;
+    }
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email);
+      if (error) {
+        console.error("Password reset error:", error.message);
+        setError(t.resetError);
+      } else {
+        setResetMessage(t.resetEmailSent);
+      }
+    } catch (err) {
+      console.error("Unexpected error:", err);
+      setError(t.resetError);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-login p-6">
       <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
@@ -67,6 +94,7 @@ export default function LoginPage() {
         </div>
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">{t.login}</h2>
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+        {resetMessage && <p className="text-green-500 text-center mb-4">{resetMessage}</p>}
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
             <label htmlFor="email" className="block text-gray-700">{t.email}</label>
@@ -97,6 +125,9 @@ export default function LoginPage() {
             {t.login}
           </button>
         </form>
+        <button onClick={handlePasswordReset} className="w-full text-blue-500 text-center mt-4">
+          {t.forgotPassword}
+        </button>
       </div>
       <div className="fixed bottom-4 right-4">
         <button onClick={toggleLanguage} className="p-2 rounded-full shadow-md">
