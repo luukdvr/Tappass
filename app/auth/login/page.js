@@ -16,6 +16,7 @@ const translations = {
     forgotPassword: "Wachtwoord vergeten?",
     resetEmailSent: "Een e-mail om je wachtwoord te resetten is verzonden.",
     resetError: "Er is een fout opgetreden bij het verzenden van de reset e-mail.",
+    noAccount: "Geen account? Registreer hier.",
   },
   en: {
     login: "Login",
@@ -26,6 +27,7 @@ const translations = {
     forgotPassword: "Forgot Password?",
     resetEmailSent: "An email to reset your password has been sent.",
     resetError: "An error occurred while sending the reset email.",
+    noAccount: "No account? Register here.",
   },
 };
 
@@ -127,6 +129,9 @@ export default function LoginPage() {
         </form>
         <button onClick={handlePasswordReset} className="w-full text-blue-500 text-center mt-4">
           {t.forgotPassword}
+        </button>
+        <button onClick={() => router.push("/auth/register")} className="w-full text-blue-500 text-center mt-4">
+          {t.noAccount}
         </button>
       </div>
       <div className="fixed bottom-4 right-4">

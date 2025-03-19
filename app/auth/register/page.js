@@ -13,6 +13,7 @@ const translations = {
     password: "Wachtwoord",
     registerError: "Fout bij aanmelden. Controleer je gegevens en probeer opnieuw.",
     invalidCredentials: "Geen account gevonden met deze gegevens. Controleer je gegevens en probeer opnieuw.",
+    login: "Al een account? Log hier in.",
   },
   en: {
     register: "Register",
@@ -20,6 +21,7 @@ const translations = {
     password: "Password",
     registerError: "Error registering. Please check your credentials and try again.",
     invalidCredentials: "No account found with these credentials. Please check your credentials and try again.",
+    login: "Already have an account? Log in here.",
   },
 };
 
@@ -95,6 +97,9 @@ export default function RegisterPage() {
             {t.register}
           </button>
         </form>
+        <button onClick={() => router.push("/auth/login")} className="w-full text-blue-500 text-center mt-4">
+          {t.login}
+        </button>
       </div>
       <div className="fixed bottom-4 right-4">
         <button onClick={toggleLanguage} className="p-2 rounded-full shadow-md">
