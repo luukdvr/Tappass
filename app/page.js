@@ -34,13 +34,6 @@ export default function HomePage() {
     fetchUser();
   }, []);
 
-  const handleDashboardClick = () => {
-    if (isSubscribed) {
-      window.location.href = "/dashboard";
-    } else {
-      alert("Je hebt geen toegang tot het dashboard. Neem contact op met support.");
-    }
-  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
