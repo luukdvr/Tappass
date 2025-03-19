@@ -11,7 +11,7 @@ import { useLanguage } from '../context/LanguageContext'; // Zorg ervoor dat een
 export default function HomePage() {
   const { t } = useLanguage(); // Gebruik de vertaalfunctie uit de context
   const [user, setUser] = useState(null);
-  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [, setIsSubscribed] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [accountPopupOpen, setAccountPopupOpen] = useState(false);
   const router = useRouter();
