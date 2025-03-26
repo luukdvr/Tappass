@@ -84,63 +84,24 @@ export default function DesignPage() {
   const handleSaveDesign = async () => {
     try {
       const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels);
-
-      // Remove the old design image if it exists
       if (designImage) {
         const oldFilePath = designImage.split('/').pop();
-        const { error: deleteError } = await supabase.storage
-          .from('designs') // Correct bucket name
-          .remove([oldFilePath]);
-
-        if (deleteError) {
-          console.error("Error deleting old design:", deleteError);
-          throw deleteError;
-        }
+        await supabase.storage.from('designs').remove([oldFilePath]);
       }
-
       const { data, error: uploadError } = await supabase.storage
-        .from('designs') // Correct bucket name
-        .upload(`design-${Date.now()}.png`, croppedImage, {
-          contentType: 'image/png',
-        });
-
-      if (uploadError) {
-        console.error("Error uploading design:", uploadError);
-        throw uploadError;
-      }
-
-      // Retrieve the public URL
+        .from('designs')
+        .upload(`design-${Date.now()}.png`, croppedImage, { contentType: 'image/png' });
+      if (uploadError) throw uploadError;
       const { data: publicUrlData, error: publicUrlError } = supabase.storage
         .from('designs')
         .getPublicUrl(data.path);
-
-      if (publicUrlError || !publicUrlData.publicUrl) {
-        console.error("Error retrieving public URL:", publicUrlError);
-        throw new Error("Failed to retrieve public URL for the uploaded design.");
-      }
-
+      if (publicUrlError) throw new Error("Public URL ophalen mislukt.");
       const publicUrl = publicUrlData.publicUrl;
-
-      // Save the public URL to the database
-      const { error: dbError } = await supabase
-        .from('users') // Correct table name
-        .upsert({
-          id: user.id, // Ensure this matches the user's ID
-          pasimageurl: publicUrl, // Correct column name
-        }, { onConflict: 'id' }); // Ensure only one entry per user
-
-      if (dbError) {
-        console.error("Error saving design URL to database:", dbError);
-        throw dbError;
-      }
-
+      await supabase.from('users').upsert({ id: user.id, pasimageurl: publicUrl }, { onConflict: 'id' });
       setDesignImage(publicUrl);
       setImageSrc(null);
-      setCrop({ x: 0, y: 0 });
-      setZoom(1);
-    } catch (err) {
-      console.error("Error saving design:", err);
-      setError(`Fout bij het opslaan van het design: ${err.message || err}`);
+    } catch {
+      setError("Er is een fout opgetreden bij het opslaan van het design.");
     }
   };
 

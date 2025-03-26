@@ -69,14 +69,16 @@ export default function Dashboard() {
   const { language, toggleLanguage } = useLanguage();
   const t = translations[language];
   const [, setIsSubscribed] = useState(false); // State for subscription status
+  const [showCustomizeModal, setShowCustomizeModal] = useState(false); // State for the customize modal
+  const [color1, setColor1] = useState("#bddbf0"); // State for gradient color 1
+  const [color2, setColor2] = useState("#0034c5"); // State for gradient color 2
 
   // Fetch the current user
   useEffect(() => {
     const fetchUser = async () => {
       const { data, error } = await supabase.auth.getUser();
       if (error) {
-        console.error("Error fetching user:", error);
-        setError("Fout bij het ophalen van gebruikersgegevens. Probeer het later opnieuw.");
+        setError("Er is een fout opgetreden. Probeer het later opnieuw.");
       } else {
         setUser(data.user);
         setIsSubscribed(data.user.is_subscribed); // Set subscription status
@@ -90,18 +92,15 @@ export default function Dashboard() {
   const loadProfile = useCallback(async () => {
     if (user) {
       try {
-        console.log("Fetching profile for user ID:", user.id); // Debugging information
         const { data, error } = await supabase
           .from("users")
           .select("*")
           .eq("id", user.id)
           .single();
         if (error) {
-          console.error("Error loading profile:", error);
-          setError(`Fout bij het laden van profielgegevens: ${error.message}`);
+          setError("Er is een fout opgetreden. Probeer het later opnieuw.");
           return;
         }
-        console.log("Profile data:", data); // Debugging information
         setLinks(data.links || []);
         setBio(data.bio || ""); // Set bio from fetched data
         setName(data.name || ""); // Set name from fetched data
@@ -111,9 +110,8 @@ export default function Dashboard() {
         setPhone(data.phone || ""); // Set phone from fetched data
         setFunctionTitle(data.functionTitle || ""); // Set function title from fetched data
         setProfileImage(data.profileimageurl || null); // Set profile image from fetched data
-      } catch (err) {
-        console.error("Error loading profile:", err);
-        setError(`Fout bij het laden van profielgegevens: ${err.message}`);
+      } catch {
+        setError("Er is een fout opgetreden. Probeer het later opnieuw.");
       }
     }
   }, [user]);
@@ -168,9 +166,8 @@ export default function Dashboard() {
           .update({ links: updatedLinks })
           .eq("id", user.id);
         if (error) throw error;
-      } catch (err) {
-        console.error("Error adding link:", err);
-        setError(`Fout bij het toevoegen van de link: ${err.message}`);
+      } catch {
+        setError("Er is een fout opgetreden. Probeer het later opnieuw.");
       }
     }
   };
@@ -357,9 +354,49 @@ export default function Dashboard() {
     }
   };
 
+  const handleSaveColors = async () => {
+    try {
+      const { error } = await supabase
+        .from("users")
+        .update({ gradientColor1: color1, gradientColor2: color2 })
+        .eq("id", user.id);
+      if (error) throw error;
+
+      alert("Kleuren opgeslagen!");
+      setShowCustomizeModal(false);
+    } catch (err) {
+      console.error("Error saving colors:", err);
+      alert("Er is een fout opgetreden bij het opslaan van de kleuren.");
+    }
+  };
+
+  useEffect(() => {
+    const fetchColors = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("users")
+          .select("gradientColor1, gradientColor2")
+          .eq("id", user?.id)
+          .single();
+        if (error) throw error;
+        setColor1(data.gradientColor1 || "#ffffff");
+        setColor2(data.gradientColor2 || "#000000");
+      } catch (err) {
+        console.error("Error fetching colors:", err);
+      }
+    };
+    if (user) fetchColors();
+  }, [user]);
+
   return (
     <div className="min-h-screen flex items-center justify-center p-6">
-      <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
+      <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg relative">
+        <button
+          onClick={() => setShowCustomizeModal(true)}
+          className="absolute top-4 right-4 bg-gray-200 p-2 rounded-full shadow-md hover:bg-gray-300 transition"
+        >
+          <img src="/equalizer.png" alt="Customize Profile" className="w-6 h-6" />
+        </button>
         <div className="flex flex-col items-center mb-6">
           <Image src="/logo%20tappass.png" alt="Tappass Logo" className="h-16 mb-4" width={256} height={256} />
           
@@ -593,6 +630,47 @@ export default function Dashboard() {
       {showNotification && (
         <div className="fixed bottom-4 right-4 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg">
           Profielgegevens succesvol opgeslagen!
+        </div>
+      )}
+
+      {/* Customize modal */}
+      {showCustomizeModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+            <h2 className="text-xl font-bold mb-4">Pas achtergrond aan</h2>
+            <div className="flex flex-col space-y-4">
+              <div>
+                <label className="block text-gray-700 mb-2">Kleur 1:</label>
+                <input
+                  type="color"
+                  value={color1}
+                  onChange={(e) => setColor1(e.target.value)}
+                  className="w-full h-10 border rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 mb-2">Kleur 2:</label>
+                <input
+                  type="color"
+                  value={color2}
+                  onChange={(e) => setColor2(e.target.value)}
+                  className="w-full h-10 border rounded-lg"
+                />
+              </div>
+              <button
+                onClick={handleSaveColors}
+                className="w-full bg-blue-500 text-white py-2 rounded-lg shadow-md hover:bg-blue-600 transition"
+              >
+                Opslaan
+              </button>
+              <button
+                onClick={() => setShowCustomizeModal(false)}
+                className="w-full bg-gray-500 text-white py-2 rounded-lg shadow-md"
+              >
+                Annuleren
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

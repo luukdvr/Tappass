@@ -54,8 +54,7 @@ export default function RegisterPage() {
         }
       }
     } catch (err) {
-      console.error("Unexpected error:", err);
-      setError("Er is een onverwachte fout opgetreden. Probeer het later opnieuw.");
+      setError("Er is een fout opgetreden. Probeer het later opnieuw.");
     }
   };
 

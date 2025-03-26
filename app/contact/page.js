@@ -25,9 +25,7 @@ export default function ContactPage() {
     try {
       const response = await fetch("/api/send-email", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, message }),
       });
 
@@ -37,10 +35,10 @@ export default function ContactPage() {
         setEmail("");
         setMessage("");
       } else {
-        setError("Er is iets misgegaan. Probeer het later opnieuw.");
+        setError("Er is een fout opgetreden. Probeer het later opnieuw.");
       }
     } catch {
-      setError("Er is iets misgegaan. Probeer het later opnieuw.");
+      setError("Er is een fout opgetreden. Probeer het later opnieuw.");
     }
   };
 

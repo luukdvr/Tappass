@@ -45,26 +45,21 @@ export default function LoginPage() {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
-        console.error("Login error:", error.message);
-        setError(t.loginError);
+        setError("Inloggen mislukt. Controleer je gegevens en probeer opnieuw.");
       } else {
-        // Check if the user is subscribed
         const { error: userError } = await supabase
           .from('users')
           .select('is_subscribed')
           .eq('id', data.user.id)
           .single();
-
         if (userError) {
-          console.error("User data error:", userError.message);
-          setError(t.loginError);
+          setError("Inloggen mislukt. Probeer het later opnieuw.");
         } else {
           router.push("/");
         }
       }
-    } catch (err) {
-      console.error("Unexpected error:", err);
-      setError("Er is een onverwachte fout opgetreden. Probeer het later opnieuw.");
+    } catch {
+      setError("Er is een fout opgetreden. Probeer het later opnieuw.");
     }
   };
 

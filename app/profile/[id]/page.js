@@ -28,6 +28,8 @@ export default function ProfilePage() {
   const [functionTitle, setFunctionTitle] = useState(""); // Add state for function title
   const [profileImage, setProfileImage] = useState(null); // Add state for profile image URL
   const [loading, setLoading] = useState(true);
+  const [color1, setColor1] = useState("#ffffff");
+  const [color2, setColor2] = useState("#000000");
   const params = useParams(); // Haal de route params op
   const { language } = useLanguage();
   const t = translations[language];
@@ -53,14 +55,34 @@ export default function ProfilePage() {
         setPhone(data.phone || ""); // Set phone from fetched data
         setFunctionTitle(data.functionTitle || ""); // Set function title from fetched data
         setProfileImage(data.profileimageurl || null); // Set profile image from fetched data
-      } catch (error) {
-        console.error("Fout bij het ophalen van profielgegevens:", error);
+      } catch {
+        setError("Er is een fout opgetreden bij het laden van profielgegevens.");
       }
       setLoading(false);
     };
 
     fetchProfile();
   }, [params]);
+
+  useEffect(() => {
+    const fetchColors = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("users")
+          .select("gradientColor1, gradientColor2")
+          .eq("id", params.id)
+          .single();
+        if (error) throw error;
+
+        // Controleer of de kleuren zijn opgehaald en stel standaardwaarden in als ze ontbreken
+        setColor1(data.gradientColor1 || "#bddbf0");
+        setColor2(data.gradientColor2 || "#0034c5");
+      } catch (err) {
+        console.error("Error fetching colors:", err);
+      }
+    };
+    fetchColors();
+  }, [params.id]);
 
   const handleAddToContacts = () => {
     const contact = {
@@ -108,14 +130,16 @@ END:VCARD
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 relative">
-      <Image
-        src="/blue-bg.jpg"
-        alt="Background"
-        layout="fill"
-        objectFit="cover"
-        className="absolute inset-0 z-0"
-      />
+    <div
+      className="min-h-screen flex flex-col items-center justify-center p-6 relative"
+      style={{
+        backgroundImage: color1 && color2
+          ? `linear-gradient(to bottom, ${color1}, ${color2})`
+          : null, // Geen standaard achtergrond
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
       <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg relative z-10">
         <button
           onClick={handleShare}
@@ -206,7 +230,7 @@ END:VCARD
           href="https://tappass.nl/"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm text-gray-500 hover:text-gray-700 transition"
+          className="text-sm text-white-500 hover:text-blue-700 transition"
         >
           {t.createTappass.split(" ").map((word, index) => (
             word === "tappass" ? <span key={index} className="underline">{word}</span> : <span key={index}>{word} </span>

@@ -56,6 +56,26 @@ export default function HomePage() {
     setAccountPopupOpen(!accountPopupOpen);
   };
 
+  const handleDashboardClick = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      router.push("/auth/login?redirectedFrom=/dashboard");
+      return;
+    }
+
+    const { data: userData } = await supabase
+      .from('users')
+      .select('is_subscribed')
+      .eq('id', session.user.id)
+      .single();
+
+    if (userData?.is_subscribed) {
+      router.push("/dashboard");
+    } else {
+      router.push("/design");
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-white"> {/* Set background to white */}
       {/* Header */}
@@ -65,7 +85,28 @@ export default function HomePage() {
             <Image src="/logo%20tappass.png" alt="Tappass Logo" width={225} height={75} />
           </a>
         </Link>
-        <div className="flex items-center space-x-4"> {/* Flex container for icons */}
+        <div className="flex items-center space-x-4">
+          {/* If user is logged in, show logout icon */}
+          {user ? (
+            <button onClick={handleLogout} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+              <Image src="/logout.png" alt="Logout" width={24} height={24} />
+            </button>
+          ) : (
+            <>
+              {/* Account Icon */}
+              <button
+                onClick={toggleAccountPopup}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: 0,
+                }}
+              >
+                <Image src="/account.png" alt="Account" width={24} height={24} />
+              </button>
+            </>
+          )}
           {/* Burger Icon */}
           <button
             onClick={toggleMenu}
@@ -77,19 +118,6 @@ export default function HomePage() {
             }}
           >
             <Image src="/burger-bar.png" alt="Menu" width={30} height={30} />
-          </button>
-
-          {/* Account Icon */}
-          <button
-            onClick={toggleAccountPopup}
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              padding: 0,
-            }}
-          >
-            <Image src="/account.png" alt="Account" width={30} height={30} />
           </button>
         </div>
       </header>
@@ -126,7 +154,16 @@ export default function HomePage() {
             ✕
           </button>
           <nav style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-          <a href="/dashboard" style={{ textDecoration: 'none', fontSize: '18px', color: '#000' }}>Dashboard</a>
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                handleDashboardClick();
+              }}
+              style={{ textDecoration: 'none', fontSize: '18px', color: '#000' }}
+            >
+              Dashboard
+            </a>
             <a href="/design" style={{ textDecoration: 'none', fontSize: '18px', color: '#000' }}>Pas ontwerpen</a>
             <a href="/faq" style={{ textDecoration: 'none', fontSize: '18px', color: '#000' }}>FAQ</a>
             <a href="/pricing" style={{ textDecoration: 'none', fontSize: '18px', color: '#000' }}>Prijzen</a>
@@ -202,7 +239,7 @@ export default function HomePage() {
 
       {/* Content */}
       <div className="flex-grow flex flex-col items-center justify-center p-6 bg-white"> {/* Set background to white */}
-        <div className="max-w-3xl mx-auto text-center px-4"> {/* Reduce max width and add padding */}
+        <div className="max-w-3xl mx-auto text-center px-4"> {/* Updated to max-w-3xl */}
           <h2 className="text-3xl font-bold mb-4">Waarom Tappass?</h2>
           <p className="text-lg mb-8">
             Tappass is de eenvoudigste manier om je netwerk te beheren en te delen. Met één scan heb je toegang tot alle contactgegevens die je nodig hebt.
@@ -229,7 +266,7 @@ export default function HomePage() {
 
       {/* Ontmoet Tappass */}
       <div className="bg-gray-100 py-12"> {/* Set background to very light gray */}
-        <div className="max-w-3xl mx-auto text-center px-4"> {/* Reduce max width and add padding */}
+        <div className="max-w-3xl mx-auto text-center px-4"> {/* Updated to max-w-3xl */}
           <h2 className="text-3xl font-bold mb-4">Ontmoet Tappass</h2>
           <p className="text-lg mb-8">
             Tappass is jouw digitale visitekaartje voor de moderne tijd. Met één simpele tap deel je al je professionele informatie, contactgegevens en social media. Geen gedoe meer met papieren kaartjes die kwijtraken of verouderen.
@@ -238,26 +275,96 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Hoe werkt Tappass? */}
-      <div className="py-12 bg-white"> {/* Set background to white */}
-        <div className="max-w-3xl mx-auto text-center px-4"> {/* Reduce max width and add padding */}
+      <div className="flex-grow flex flex-col items-center justify-center p-6 bg-white"> {/* Set background to white */}
+        <div className="max-w-3xl mx-auto text-center px-4"> {/* Updated to max-w-3xl */}
           <h2 className="text-3xl font-bold mb-4">Hoe werkt Tappass?</h2>
           <p className="text-lg mb-8">
-            Tappass is eenvoudig te gebruiken. Scan de QR-code en krijg direct toegang tot alle contactgegevens.
+            TTappass is eenvoudig te gebruiken. Scan de QR-code en krijg direct toegang tot alle contactgegevens.
           </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-4"> {/* Add padding for consistent spacing */}
+            <div className="bg-white p-6 rounded-2xl shadow-lg text-center w-full"> {/* Ensure consistent width */}
+              <h3 className="text-xl font-bold mb-2">Bestel je Tappass</h3>
+              <p className="text-gray-600">Kies je design en personaliseer je digitale visitekaartje.</p>
+            </div>
+            <div className="bg-white p-6 rounded-2xl shadow-lg text-center w-full"> {/* Ensure consistent width */}
+              <h3 className="text-xl font-bold mb-2">Stel je profiel in</h3>
+              <p className="text-gray-600">Voeg je contactgegevens en social media links toe aan je profiel.</p>
+            </div>
+            <div className="bg-white p-6 rounded-2xl shadow-lg text-center w-full"> {/* Ensure consistent width */}
+              <h3 className="text-xl font-bold mb-2">Deel met één tap</h3>
+              <p className="text-gray-600">Houd je Tappass tegen een telefoon en deel direct je gegevens.</p>
+            </div>
+          </div>
+          <button onClick={handleOrderNowClick} className="bg-blue-500 text-white py-3 px-6 rounded-2xl shadow-lg hover:bg-blue-600 transition mt-8 inline-block">
+            Bestel nu
+          </button>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-4"> {/* Add padding for consistent spacing */}
-          <div className="bg-white p-6 rounded-2xl shadow-lg text-center w-full"> {/* Ensure consistent width */}
-            <h3 className="text-xl font-bold mb-2">Bestel je Tappass</h3>
-            <p className="text-gray-600">Kies je design en personaliseer je digitale visitekaartje.</p>
-          </div>
-          <div className="bg-white p-6 rounded-2xl shadow-lg text-center w-full"> {/* Ensure consistent width */}
-            <h3 className="text-xl font-bold mb-2">Stel je profiel in</h3>
-            <p className="text-gray-600">Voeg je contactgegevens en social media links toe aan je profiel.</p>
-          </div>
-          <div className="bg-white p-6 rounded-2xl shadow-lg text-center w-full"> {/* Ensure consistent width */}
-            <h3 className="text-xl font-bold mb-2">Deel met één tap</h3>
-            <p className="text-gray-600">Houd je Tappass tegen een telefoon en deel direct je gegevens.</p>
+      </div>
+
+      {/* Ontwerp je eigen Tappass */}
+      <div className="py-12 bg-white"> {/* Set background to white */}
+        <div className="max-w-3xl mx-auto text-center px-4"> {/* Centered content */}
+          <h2 className="text-3xl font-bold mb-4">Ontwerp je eigen Tappass</h2>
+          <p className="text-lg mb-8">
+            Maak je Tappass uniek! Kies je eigen stijl, voeg je logo toe, en personaliseer je digitale visitekaartje zoals jij dat wilt. Laat je creativiteit de vrije loop en maak een blijvende indruk.
+          </p>
+          <Image
+            src="/__JZbmcmRLOKMdmuYbiang.webp" // Placeholder image, replace with your own
+            alt="Ontwerp je eigen Tappass"
+            width={600}
+            height={400}
+            className="mx-auto rounded-2xl shadow-lg mb-8"
+          />
+          <button
+            onClick={() => router.push("/design")}
+            className="bg-blue-500 text-white py-3 px-6 rounded-2xl shadow-lg hover:bg-blue-600 transition"
+          >
+            Begin met ontwerpen
+          </button>
+        </div>
+      </div>
+
+      {/* Verschil tussen normale visitekaartjes en Tappass */}
+      <div className="py-12 bg-gray-100"> {/* Set background to very light gray */}
+        <div className="max-w-3xl mx-auto px-4"> {/* Updated to max-w-3xl */}
+          <h2 className="text-3xl font-bold text-center mb-8">Waarom overstappen naar Tappass?</h2>
+          <div className="flex flex-col md:flex-row gap-8"> {/* Changed to flex layout */}
+            {/* Oude visitekaartjes */}
+            <div className="bg-white p-6 rounded-2xl shadow-lg flex-1"> {/* Added flex-1 for equal width */}
+              <h3 className="text-2xl font-bold mb-4 text-black">Oude visitekaartjes</h3>
+              <ul className="list-none space-y-4">
+                <li className="flex items-center text-gray-600">
+                  <Image src="/x-mark.png" alt="Minpunt" width={24} height={24} className="mr-2" />
+                  Altijd meenemen, raken kwijt of beschadigen snel.
+                </li>
+                <li className="flex items-center text-gray-600">
+                  <Image src="/x-mark.png" alt="Minpunt" width={24} height={24} className="mr-2" />
+                  Niemand bewaart ze, netwerk gaat snel verloren.
+                </li>
+                <li className="flex items-center text-gray-600">
+                  <Image src="/x-mark.png" alt="Minpunt" width={24} height={24} className="mr-2" />
+                  Beperkte ruimte, geen makkelijke toegang tot links.
+                </li>
+              </ul>
+            </div>
+            {/* Tappass */}
+            <div className="bg-white p-6 rounded-2xl shadow-lg flex-1"> {/* Added flex-1 for equal width */}
+              <h3 className="text-2xl font-bold mb-4 text-black">Tappass</h3>
+              <ul className="list-none space-y-4">
+                <li className="flex items-center text-gray-600">
+                  <Image src="/check-mark.png" alt="Voordeel" width={24} height={24} className="mr-2" />
+                  Stevige kaart, altijd bij je, raakt niet kwijt.
+                </li>
+                <li className="flex items-center text-gray-600">
+                  <Image src="/check-mark.png" alt="Voordeel" width={24} height={24} className="mr-2" />
+                  Contact blijft behouden, netwerk blijft intact.
+                </li>
+                <li className="flex items-center text-gray-600">
+                  <Image src="/check-mark.png" alt="Voordeel" width={24} height={24} className="mr-2" />
+                  Onbeperkte informatie, snelle toegang tot links.
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -283,6 +390,31 @@ export default function HomePage() {
               <p className="text-gray-600 mt-2">- Peter van Dam</p>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Tappass Prijs en Features */}
+      <div className="py-12 bg-gray-100 flex justify-center items-center"> {/* Center content */}
+        <div className="bg-white p-8 rounded-2xl shadow-lg max-w-3xl text-center"> {/* White card container */}
+          <h2 className="text-3xl font-bold mb-4">Tappass voor slechts €5 per maand</h2>
+          <p className="text-lg mb-8">
+            Voor slechts €5 per maand krijg je toegang tot alle premium functies van Tappass. Ontdek wat je allemaal krijgt:
+          </p>
+          <ul className="list-disc list-inside text-left text-gray-700 space-y-4"> {/* Features list */}
+            <li>Onbeperkt delen van je digitale visitekaartje.</li>
+            <li>Volledig aanpasbaar ontwerp voor jouw Tappass.</li>
+            <li>Toegang tot uitgebreide netwerkstatistieken.</li>
+            <li>Integratie met sociale media en professionele platforms.</li>
+            <li>24/7 klantenondersteuning voor al je vragen.</li>
+            <li>Veilige opslag van je contactgegevens in de cloud.</li>
+            <li>Regelmatige updates met nieuwe functies.</li>
+          </ul>
+          <button
+            onClick={() => router.push("/pricing")}
+            className="bg-blue-500 text-white py-3 px-6 rounded-2xl shadow-lg hover:bg-blue-600 transition mt-8"
+          >
+            Bekijk abonnementen
+          </button>
         </div>
       </div>
 
