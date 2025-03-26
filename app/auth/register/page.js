@@ -53,7 +53,8 @@ export default function RegisterPage() {
           router.push("/");
         }
       }
-    } catch (err) {
+    } catch (error) {
+      console.error(error); // Zorg ervoor dat je de fout logt als dat nodig is
       setError("Er is een fout opgetreden. Probeer het later opnieuw.");
     }
   };
