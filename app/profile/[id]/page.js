@@ -30,6 +30,7 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [color1, setColor1] = useState("#ffffff");
   const [color2, setColor2] = useState("#000000");
+  const [buttonColor, setButtonColor] = useState("#007bff"); // Default button color
   const params = useParams(); // Haal de route params op
   const { language } = useLanguage();
   const t = translations[language];
@@ -82,6 +83,23 @@ export default function ProfilePage() {
       }
     };
     fetchColors();
+  }, [params.id]);
+
+  useEffect(() => {
+    const fetchButtonColor = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("users")
+          .select("buttonColor")
+          .eq("id", params.id)
+          .single();
+        if (error) throw error;
+        setButtonColor(data.buttonColor || "#007bff");
+      } catch (err) {
+        console.error("Error fetching button color:", err);
+      }
+    };
+    fetchButtonColor();
   }, [params.id]);
 
   const handleAddToContacts = () => {
@@ -181,10 +199,11 @@ END:VCARD
                 {links.map((link, index) => (
                   <a
                     key={index}
-                    href={link.url.startsWith("http") ? link.url : `https://${link.url}`} // Forceer https:// als het ontbreekt
+                    href={link.url.startsWith("http") ? link.url : `https://${link.url}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block bg-blue-500 text-white text-center py-3 px-6 rounded-lg shadow-md hover:bg-blue-600 transition"
+                    style={{ backgroundColor: buttonColor }}
+                    className="block text-white text-center py-3 px-6 rounded-lg shadow-md hover:opacity-90 transition"
                   >
                     {link.title}
                   </a>
@@ -195,26 +214,32 @@ END:VCARD
             )}
             <div className="w-full max-w-md mt-6 space-y-2 text-center">
               <h2 className="text-xl font-bold text-center text-gray-800">Contact</h2>
-              <a
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-800 flex items-center justify-center hover:underline"
-              >
-                <FaMapMarkerAlt className="mr-2" /> {address}
-              </a>
-              <a
-                href={`mailto:${email}`}
-                className="text-gray-800 flex items-center justify-center hover:underline"
-              >
-                <FaEnvelope className="mr-2" /> {email}
-              </a>
-              <a
-                href={`tel:${phone}`}
-                className="text-gray-800 flex items-center justify-center hover:underline"
-              >
-                <FaPhone className="mr-2" /> {phone}
-              </a>
+              {address && (
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-800 flex items-center justify-center hover:underline"
+                >
+                  <FaMapMarkerAlt className="mr-2" /> {address}
+                </a>
+              )}
+              {email && (
+                <a
+                  href={`mailto:${email}`}
+                  className="text-gray-800 flex items-center justify-center hover:underline"
+                >
+                  <FaEnvelope className="mr-2" /> {email}
+                </a>
+              )}
+              {phone && (
+                <a
+                  href={`tel:${phone}`}
+                  className="text-gray-800 flex items-center justify-center hover:underline"
+                >
+                  <FaPhone className="mr-2" /> {phone}
+                </a>
+              )}
               <button
                 onClick={handleAddToContacts}
                 className="mt-4 bg-green-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-green-600 transition flex items-center justify-center mx-auto"

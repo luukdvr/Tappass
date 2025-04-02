@@ -31,7 +31,15 @@ const handler = async (req, res) => {
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object;
 
-      // Fulfill the purchase...
+      console.log("Stripe session data:", session);
+
+      // Ensure client_reference_id is present
+      if (!session.client_reference_id) {
+        console.error("Missing client_reference_id in session.");
+        return res.status(400).send("Missing client_reference_id.");
+      }
+
+      // Update the user's subscription status in Supabase
       const { error } = await supabase
         .from('users')
         .update({ is_subscribed: true })
@@ -41,6 +49,8 @@ const handler = async (req, res) => {
         console.error("Error updating user subscription status:", error.message);
         return res.status(400).send(`Supabase Error: ${error.message}`);
       }
+
+      console.log(`User ${session.client_reference_id} subscription updated successfully.`);
     }
 
     res.status(200).json({ received: true });

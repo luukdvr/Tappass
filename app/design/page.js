@@ -222,8 +222,15 @@ export default function DesignPage() {
           {t.cancel}
         </button>
         <a
-          href="https://buy.stripe.com/5kA7tzgFIe2z6Z2fYZ"
+          href="https://buy.stripe.com/5kA7tzgFIe2z6Z2fYZ" // Stripe payment link
+          target="_blank" // Open in a new tab
+          rel="noopener noreferrer"
           className="w-full bg-green-500 text-white py-2 rounded-lg mt-4 shadow-md text-center block"
+          onClick={(e) => {
+            e.preventDefault(); // Voorkom standaardactie
+            window.open("https://buy.stripe.com/5kA7tzgFIe2z6Z2fYZ", "_blank"); // Open Stripe in een nieuw tabblad
+            window.location.href = "/"; // Redirect huidige tabblad naar homepagina
+          }}
         >
           Bestel nu
         </a>

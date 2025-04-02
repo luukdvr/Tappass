@@ -72,6 +72,7 @@ export default function Dashboard() {
   const [showCustomizeModal, setShowCustomizeModal] = useState(false); // State for the customize modal
   const [color1, setColor1] = useState("#bddbf0"); // State for gradient color 1
   const [color2, setColor2] = useState("#0034c5"); // State for gradient color 2
+  const [buttonColor, setButtonColor] = useState("#007bff"); // State for button color
 
   // Fetch the current user
   useEffect(() => {
@@ -358,7 +359,7 @@ export default function Dashboard() {
     try {
       const { error } = await supabase
         .from("users")
-        .update({ gradientColor1: color1, gradientColor2: color2 })
+        .update({ gradientColor1: color1, gradientColor2: color2, buttonColor })
         .eq("id", user.id);
       if (error) throw error;
 
@@ -375,12 +376,13 @@ export default function Dashboard() {
       try {
         const { data, error } = await supabase
           .from("users")
-          .select("gradientColor1, gradientColor2")
+          .select("gradientColor1, gradientColor2, buttonColor")
           .eq("id", user?.id)
           .single();
         if (error) throw error;
         setColor1(data.gradientColor1 || "#ffffff");
         setColor2(data.gradientColor2 || "#000000");
+        setButtonColor(data.buttonColor || "#007bff");
       } catch (err) {
         console.error("Error fetching colors:", err);
       }
@@ -637,10 +639,10 @@ export default function Dashboard() {
       {showCustomizeModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">Pas achtergrond aan</h2>
+            <h2 className="text-xl font-bold mb-4">Pas kleuren aan</h2>
             <div className="flex flex-col space-y-4">
               <div>
-                <label className="block text-gray-700 mb-2">Kleur 1:</label>
+                <label className="block text-gray-700 mb-2">Achtergrondkleur:</label>
                 <input
                   type="color"
                   value={color1}
@@ -649,11 +651,20 @@ export default function Dashboard() {
                 />
               </div>
               <div>
-                <label className="block text-gray-700 mb-2">Kleur 2:</label>
+                <label className="block text-gray-700 mb-2">Gradientkleur:</label>
                 <input
                   type="color"
                   value={color2}
                   onChange={(e) => setColor2(e.target.value)}
+                  className="w-full h-10 border rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 mb-2">Linkknopkleur:</label>
+                <input
+                  type="color"
+                  value={buttonColor}
+                  onChange={(e) => setButtonColor(e.target.value)}
                   className="w-full h-10 border rounded-lg"
                 />
               </div>
