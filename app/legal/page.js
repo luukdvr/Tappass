@@ -8,16 +8,22 @@ export default function LegalPage() {
   return (
     <div className="min-h-screen flex flex-col bg-white"> {/* Set background to white */}
       {/* Header */}
-      <header className="w-full bg-white shadow-lg py-4 px-6 flex justify-center items-center relative">
+      <header className="w-full bg-white shadow-lg py-4 px-6 flex justify-between items-center">
         <Link href="/" legacyBehavior>
           <a>
             <Image src="/logo%20tappass.png" alt="Tappass Logo" width={225} height={75} />
           </a>
         </Link>
-        <div className="absolute right-6">
-          <Link href="/auth/login" legacyBehavior>
-            <a className="text-blue-500 hover:text-blue-700 transition">Inloggen</a>
-          </Link>
+        <div className="flex items-center space-x-4">
+          <button style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+            <Image src="/logout.png" alt="Logout" width={24} height={24} />
+          </button>
+          <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+            <Image src="/account.png" alt="Account" width={24} height={24} />
+          </button>
+          <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+            <Image src="/burger-bar.png" alt="Menu" width={30} height={30} />
+          </button>
         </div>
       </header>
 

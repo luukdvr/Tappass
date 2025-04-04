@@ -132,17 +132,6 @@ export default function DesignPage() {
     }
   };
 
-  // Handle preview design
-  const handlePreviewDesign = async () => {
-    try {
-      const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels);
-      const previewUrl = URL.createObjectURL(croppedImage);
-      setPreviewImage(previewUrl);
-    } catch (err) {
-      console.error("Error generating preview:", err);
-      setError(`Fout bij het genereren van de preview: ${err.message}`);
-    }
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6">
@@ -204,19 +193,13 @@ export default function DesignPage() {
         )}
         {error && <div className="text-red-500 mb-4">{error}</div>}
         <button
-          onClick={handlePreviewDesign}
-          className="w-full bg-gray-500 text-white py-2 rounded-lg mb-2 shadow-md"
-        >
-          {t.preview}
-        </button>
-        <button
           onClick={handleSaveDesign}
           className="w-full bg-blue-500 text-white py-2 rounded-lg mb-2 shadow-md"
         >
           {t.save}
         </button>
         <button
-          onClick={() => router.push("/dashboard")}
+          onClick={() => router.push("/")}
           className="w-full bg-gray-500 text-white py-2 rounded-lg shadow-md"
         >
           {t.cancel}
@@ -234,19 +217,23 @@ export default function DesignPage() {
         >
           Bestel nu
         </a>
-        {previewImage && (
-          <div className="mt-4">
-            <h3 className="text-lg font-bold mb-2">{t.preview}</h3>
-            <div className="relative w-full h-64 bg-gray-200 mb-4 rounded-lg overflow-hidden">
-              <Image
-                src={previewImage}
-                alt="Preview"
-                layout="fill"
-                objectFit="contain"
-              />
-            </div>
-          </div>
-        )}
+        <div className="bg-gray-100 p-6 rounded-lg shadow-md mt-6">
+          <h3 className="text-lg font-bold mb-4">Hoe werkt Tappass?</h3>
+          <ol className="list-decimal list-inside space-y-2 text-gray-700">
+            <li>
+              <span className="font-semibold">Pas ontwerpen:</span> Upload je design, pas het aan met onze editor, en sla het op.
+            </li>
+            <li>
+              <span className="font-semibold">Thuis ontvangen:</span> Nadat je je ontwerp hebt opgeslagen, wordt je Tappass naar je huisadres gestuurd.
+            </li>
+            <li>
+              <span className="font-semibold">Toegang tot dashboard:</span> Log in op je persoonlijke dashboard om je Tappass te beheren.
+            </li>
+            <li>
+              <span className="font-semibold">Linkpagina personaliseren:</span> Voeg je contactgegevens, social media links en andere informatie toe aan je Tappass-linkpagina.
+            </li>
+          </ol>
+        </div>
       </div>
       <div className="fixed bottom-4 right-4">
         <button onClick={toggleLanguage} className="p-2 rounded-full shadow-md">

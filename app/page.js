@@ -301,6 +301,32 @@ export default function HomePage() {
         </div>
       </div>
 
+      {/* Binnen 10 minuten sectie */}
+      <div className="py-12 bg-gray-100">
+        <div className="max-w-3xl mx-auto text-center px-4">
+          <h2 className="text-3xl font-bold mb-4">Binnen 10 minuten klaar!</h2>
+          <p className="text-lg mb-8">
+            Vraag je pas aan, ontwerp hem en personaliseer je linkpagina in minder dan 10 minuten. Zo kun je direct beginnen met netwerken!
+          </p>
+        </div>
+      </div>
+
+      {/* Serieuze netwerkers sectie */}
+      <div className="py-12 bg-white">
+        <div className="max-w-3xl mx-auto text-center px-4">
+          <h2 className="text-3xl font-bold mb-4">Voor serieuze netwerkers</h2>
+          <p className="text-lg mb-8">
+            Tappass is niet voor iedereen. Het is speciaal ontworpen voor mensen die serieus zijn over hun netwerk en een blijvende indruk willen maken. Ben jij klaar om je netwerk naar een hoger niveau te tillen?
+          </p>
+          <button
+            onClick={() => router.push("/design")}
+            className="bg-blue-500 text-white py-3 px-6 rounded-2xl shadow-lg hover:bg-blue-600 transition"
+          >
+            Begin nu
+          </button>
+        </div>
+      </div>
+
       {/* Ontwerp je eigen Tappass */}
       <div className="py-12 bg-white"> {/* Set background to white */}
         <div className="max-w-3xl mx-auto text-center px-4"> {/* Centered content */}

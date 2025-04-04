@@ -2,24 +2,126 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import "../../styles/globals.css"; // Import global styles
 
 export default function SupportPage() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [accountPopupOpen, setAccountPopupOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
+  const toggleAccountPopup = () => {
+    setAccountPopupOpen(!accountPopupOpen);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-white"> {/* Set background to white */}
       {/* Header */}
-      <header className="w-full bg-white shadow-lg py-4 px-6 flex justify-center items-center relative">
+      <header className="w-full bg-white shadow-lg py-4 px-6 flex justify-between items-center">
         <Link href="/" legacyBehavior>
           <a>
             <Image src="/logo%20tappass.png" alt="Tappass Logo" width={225} height={75} />
           </a>
         </Link>
-        <div className="absolute right-6">
-          <Link href="/auth/login" legacyBehavior>
-            <a className="text-blue-500 hover:text-blue-700 transition">Inloggen</a>
-          </Link>
+        <div className="flex items-center space-x-4">
+          <button onClick={toggleAccountPopup} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+            <Image src="/account.png" alt="Account" width={24} height={24} />
+          </button>
+          <button onClick={toggleMenu} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+            <Image src="/burger-bar.png" alt="Menu" width={30} height={30} />
+          </button>
         </div>
       </header>
+
+      {/* Account Popup */}
+      {accountPopupOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: '#fff',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+          }}
+        >
+          <button
+            onClick={toggleAccountPopup}
+            style={{
+              position: 'absolute',
+              top: '20px',
+              right: '20px',
+              background: 'none',
+              border: 'none',
+              fontSize: '24px',
+              cursor: 'pointer',
+            }}
+          >
+            ✕
+          </button>
+          <nav style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+            <Link href="/auth/login" legacyBehavior>
+              <a style={{ textDecoration: 'none', fontSize: '18px', color: '#000' }}>Inloggen</a>
+            </Link>
+            <Link href="/auth/register" legacyBehavior>
+              <a style={{ textDecoration: 'none', fontSize: '18px', color: '#000' }}>Registreren</a>
+            </Link>
+          </nav>
+        </div>
+      )}
+
+      {/* Dropdown Menu */}
+      {menuOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: '#fff',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+          }}
+        >
+          <button
+            onClick={toggleMenu}
+            style={{
+              position: 'absolute',
+              top: '20px',
+              right: '20px',
+              background: 'none',
+              border: 'none',
+              fontSize: '24px',
+              cursor: 'pointer',
+            }}
+          >
+            ✕
+          </button>
+          <nav style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+            <Link href="/faq" legacyBehavior>
+              <a style={{ textDecoration: 'none', fontSize: '18px', color: '#000' }}>FAQ</a>
+            </Link>
+            <Link href="/pricing" legacyBehavior>
+              <a style={{ textDecoration: 'none', fontSize: '18px', color: '#000' }}>Prijzen</a>
+            </Link>
+            <Link href="/contact" legacyBehavior>
+              <a style={{ textDecoration: 'none', fontSize: '18px', color: '#000' }}>Contact</a>
+            </Link>
+          </nav>
+        </div>
+      )}
 
       {/* Support */}
       <div className="flex-grow flex flex-col items-center justify-center p-6 bg-white"> {/* Set background to white */}
