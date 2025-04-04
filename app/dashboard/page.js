@@ -397,7 +397,7 @@ export default function Dashboard() {
           onClick={() => setShowCustomizeModal(true)}
           className="absolute top-4 right-4 bg-gray-200 p-2 rounded-full shadow-md hover:bg-gray-300 transition"
         >
-          <img src="/equalizer.png" alt="Customize Profile" className="w-6 h-6" />
+          <Image src="/equalizer.png" alt="Customize Profile" className="w-6 h-6" width={24} height={24} />
         </button>
         <div className="flex flex-col items-center mb-6">
           <Image src="/logo%20tappass.png" alt="Tappass Logo" className="h-16 mb-4" width={256} height={256} />
