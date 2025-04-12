@@ -255,7 +255,7 @@ END:VCARD
           href="https://tappass.nl/"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm text-white-500 hover:text-blue-700 transition"
+          className="text-sm text-white bg-black border border-black px-2 py-1 rounded hover:text-blue-700 transition"
         >
           {t.createTappass.split(" ").map((word, index) => (
             word === "tappass" ? <span key={index} className="underline">{word}</span> : <span key={index}>{word} </span>
