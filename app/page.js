@@ -266,12 +266,17 @@ export default function HomePage() {
 
       {/* Ontmoet Tappass */}
       <div className="bg-gray-100 py-12"> {/* Set background to very light gray */}
-        <div className="max-w-3xl mx-auto text-center px-4"> {/* Updated to max-w-3xl */}
+        <div className="max-w-3xl mx-auto text-center px-4"> {/* Reduce max width and add padding */}
           <h2 className="text-3xl font-bold mb-4">Ontmoet Tappass</h2>
           <p className="text-lg mb-8">
             Tappass is jouw digitale visitekaartje voor de moderne tijd. Met één simpele tap deel je al je professionele informatie, contactgegevens en social media. Geen gedoe meer met papieren kaartjes die kwijtraken of verouderen.
           </p>
-          <Image src="/Q2keFfmxRcifobsHZdZSyQ.png" alt="Ontmoet Tappass" width={600} height={400} className="mx-auto rounded-2xl shadow-lg" />
+          <video
+            src="/Tappass uitleg video.mp4"
+            controls
+            className="mx-auto rounded-2xl shadow-lg"
+            style={{ maxWidth: '100%', height: 'auto' }}
+          />
         </div>
       </div>
 
