@@ -138,6 +138,24 @@ export default function DesignPage() {
         <div className="flex justify-center mb-6">
           <Image src="/logo%20tappass.png" alt="Tappass Logo" width={256} height={256} />
         </div>
+        <div className="bg-gray-100 p-6 rounded-lg shadow-md mt-6">
+          <h3 className="text-lg font-bold mb-4">Hoe werkt Tappass?</h3>
+          <ol className="list-decimal list-inside space-y-2 text-gray-700">
+            <li>
+              <span className="font-semibold">Pas ontwerpen:</span> Upload je design, pas het aan met onze editor, en sla het op en bestel je kaart.
+            </li>
+            <li>
+              <span className="font-semibold">Thuis ontvangen:</span> Nadat je je ontwerp hebt opgeslagen, wordt je Tappass naar je huisadres gestuurd.
+            </li>
+            <li>
+              <span className="font-semibold">Toegang tot dashboard:</span> Log in op je persoonlijke dashboard om je Tappass te beheren.
+            </li>
+            <li>
+              <span className="font-semibold">Linkpagina personaliseren:</span> Voeg je contactgegevens, social media links en andere informatie toe aan je Tappass-linkpagina.
+            </li>
+          </ol>
+        </div>
+        <h2 className="text-xl font-bold mb-4"></h2>
         <h2 className="text-xl font-bold mb-4">{t.uploadDesign}</h2>
         <input
           type="file"
@@ -216,23 +234,6 @@ export default function DesignPage() {
         >
           Bestel nu
         </a>
-        <div className="bg-gray-100 p-6 rounded-lg shadow-md mt-6">
-          <h3 className="text-lg font-bold mb-4">Hoe werkt Tappass?</h3>
-          <ol className="list-decimal list-inside space-y-2 text-gray-700">
-            <li>
-              <span className="font-semibold">Pas ontwerpen:</span> Upload je design, pas het aan met onze editor, en sla het op.
-            </li>
-            <li>
-              <span className="font-semibold">Thuis ontvangen:</span> Nadat je je ontwerp hebt opgeslagen, wordt je Tappass naar je huisadres gestuurd.
-            </li>
-            <li>
-              <span className="font-semibold">Toegang tot dashboard:</span> Log in op je persoonlijke dashboard om je Tappass te beheren.
-            </li>
-            <li>
-              <span className="font-semibold">Linkpagina personaliseren:</span> Voeg je contactgegevens, social media links en andere informatie toe aan je Tappass-linkpagina.
-            </li>
-          </ol>
-        </div>
       </div>
       <div className="fixed bottom-4 right-4">
         <button onClick={toggleLanguage} className="p-2 rounded-full shadow-md">
