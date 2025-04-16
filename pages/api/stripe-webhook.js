@@ -23,34 +23,30 @@ const handler = async (req, res) => {
 
     try {
       event = stripe.webhooks.constructEvent(buf, sig, endpointSecret);
+      console.log('✅ Webhook event received:', event.type);
     } catch (err) {
-      console.error(`⚠️  Webhook signature verification failed.`, err.message);
+      console.log(`⚠️  Webhook signature verification failed.`, err.message);
       return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object;
+      console.log('✅ Checkout session completed:', session);
 
-      console.log("Stripe session data:", session);
+      const email = session.customer_details.email;
 
-      // Ensure client_reference_id is present
-      if (!session.client_reference_id) {
-        console.error("Missing client_reference_id in session.");
-        return res.status(400).send("Missing client_reference_id.");
-      }
-
-      // Update the user's subscription status in Supabase
-      const { error } = await supabase
+      // Update is_subscribed field in Supabase
+      const { data, error } = await supabase
         .from('users')
         .update({ is_subscribed: true })
-        .eq('id', session.client_reference_id);
+        .eq('email', email);
 
       if (error) {
-        console.error("Error updating user subscription status:", error.message);
-        return res.status(400).send(`Supabase Error: ${error.message}`);
+        console.error('❌ Error updating is_subscribed:', error.message);
+        return res.status(400).send(`Subscription update error: ${error.message}`);
       }
 
-      console.log(`User ${session.client_reference_id} subscription updated successfully.`);
+      console.log('✅ is_subscribed updated for user:', data);
     }
 
     res.status(200).json({ received: true });
