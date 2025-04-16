@@ -76,6 +76,14 @@ export default function HomePage() {
     }
   };
 
+  const handleDesignClick = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      router.push("/auth/login?redirectedFrom=/design");
+      return;
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-white"> {/* Set background to white */}
       {/* Header */}
@@ -164,7 +172,16 @@ export default function HomePage() {
             >
               Dashboard
             </a>
-            <a href="/design" style={{ textDecoration: 'none', fontSize: '18px', color: '#000' }}>Pas ontwerpen</a>
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                handleDesignClick();
+              }}
+              style={{ textDecoration: 'none', fontSize: '18px', color: '#000' }}
+            >
+              Pas ontwerpen
+            </a>
             <a href="/faq" style={{ textDecoration: 'none', fontSize: '18px', color: '#000' }}>FAQ</a>
             <a href="/pricing" style={{ textDecoration: 'none', fontSize: '18px', color: '#000' }}>Prijzen</a>
             <a href="/contact" style={{ textDecoration: 'none', fontSize: '18px', color: '#000' }}>Contact</a>
@@ -275,7 +292,7 @@ export default function HomePage() {
             src="/Tappass uitleg video.mp4"
             controls
             className="mx-auto rounded-2xl shadow-lg"
-            style={{ maxWidth: '100%', height: 'auto' }}
+            style={{ maxWidth: '30%', height: 'auto' }}
           />
         </div>
       </div>
@@ -284,7 +301,7 @@ export default function HomePage() {
         <div className="max-w-3xl mx-auto text-center px-4"> {/* Updated to max-w-3xl */}
           <h2 className="text-3xl font-bold mb-4">Hoe werkt Tappass?</h2>
           <p className="text-lg mb-8">
-            TTappass is eenvoudig te gebruiken. Scan de QR-code en krijg direct toegang tot alle contactgegevens.
+            Tappass is eenvoudig te gebruiken. Scan de QR-code en krijg direct toegang tot alle contactgegevens.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-4"> {/* Add padding for consistent spacing */}
             <div className="bg-white p-6 rounded-2xl shadow-lg text-center w-full"> {/* Ensure consistent width */}
